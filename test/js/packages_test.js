@@ -1,5 +1,4 @@
-
-module("webact.js");
+module("packages.js");
 
 test("create", function () {
 	var proto = {x: 22, y: 7, z: 12};

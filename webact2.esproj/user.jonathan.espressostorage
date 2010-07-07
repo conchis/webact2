@@ -7,13 +7,13 @@
 	<key>ESProjectWindowState</key>
 	<dict>
 		<key>ContentSize</key>
-		<string>{1106, 705}</string>
+		<string>{1165, 748}</string>
 		<key>ProjectURL</key>
 		<string>file://localhost/Users/jonathan/Sites/webact2/webact2.esproj/</string>
 		<key>StateType</key>
 		<string>ProjectWindow</string>
 		<key>TopLeftPoint</key>
-		<string>{242, 878}</string>
+		<string>{49, 878}</string>
 	</dict>
 	<key>com.macrabbit.Espresso.FileManager.DisclosureCollapsed</key>
 	<false/>
@@ -27,17 +27,11 @@
 		</array>
 	</dict>
 	<key>com.macrabbit.Espresso.Publisher.DisclosureCollapsed</key>
-	<false/>
+	<true/>
 	<key>com.macrabbit.Espresso.Workspace.Tabs</key>
 	<dict>
 		<key>Tabs</key>
 		<array>
-			<dict>
-				<key>DocumentURL</key>
-				<string>file://localhost/Users/jonathan/Sites/webact2/js/webact.js</string>
-				<key>StateType</key>
-				<string>DefaultTab</string>
-			</dict>
 			<dict>
 				<key>StateType</key>
 				<string>PreviewTab</string>
@@ -52,7 +46,13 @@
 			</dict>
 			<dict>
 				<key>DocumentURL</key>
-				<string>file://localhost/Users/jonathan/Sites/webact2/test/js/webact_test.js</string>
+				<string>file://localhost/Users/jonathan/Sites/webact2/test/js/observers_test.js</string>
+				<key>StateType</key>
+				<string>DefaultTab</string>
+			</dict>
+			<dict>
+				<key>DocumentURL</key>
+				<string>file://localhost/Users/jonathan/Sites/webact2/js/observers.js</string>
 				<key>StateType</key>
 				<string>DefaultTab</string>
 			</dict>
