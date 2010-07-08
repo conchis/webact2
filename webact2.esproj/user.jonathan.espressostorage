@@ -27,16 +27,46 @@
 		</array>
 	</dict>
 	<key>com.macrabbit.Espresso.Publisher.DisclosureCollapsed</key>
-	<true/>
+	<false/>
 	<key>com.macrabbit.Espresso.Workspace.Tabs</key>
 	<dict>
 		<key>Tabs</key>
 		<array>
 			<dict>
+				<key>DocumentURL</key>
+				<string>file://localhost/Users/jonathan/Sites/webact2/index.html</string>
 				<key>StateType</key>
-				<string>PreviewTab</string>
-				<key>URL</key>
-				<string>file:///Users/jonathan/Sites/webact2/test/index.html</string>
+				<string>DefaultTab</string>
+			</dict>
+			<dict>
+				<key>DocumentURL</key>
+				<string>file://localhost/Users/jonathan/Sites/webact2/css/styles.css</string>
+				<key>StateType</key>
+				<string>DefaultTab</string>
+			</dict>
+			<dict>
+				<key>DocumentURL</key>
+				<string>file://localhost/Users/jonathan/Sites/webact2/js/trees.js</string>
+				<key>StateType</key>
+				<string>DefaultTab</string>
+			</dict>
+			<dict>
+				<key>DocumentURL</key>
+				<string>file://localhost/Users/jonathan/Sites/webact2/js/outlines.js</string>
+				<key>StateType</key>
+				<string>DefaultTab</string>
+			</dict>
+			<dict>
+				<key>DocumentURL</key>
+				<string>file://localhost/Users/jonathan/Sites/webact2/js/paths.js</string>
+				<key>StateType</key>
+				<string>DefaultTab</string>
+			</dict>
+			<dict>
+				<key>DocumentURL</key>
+				<string>file://localhost/Users/jonathan/Sites/webact2/test/js/paths_test.js</string>
+				<key>StateType</key>
+				<string>DefaultTab</string>
 			</dict>
 			<dict>
 				<key>DocumentURL</key>
@@ -45,16 +75,8 @@
 				<string>DefaultTab</string>
 			</dict>
 			<dict>
-				<key>DocumentURL</key>
-				<string>file://localhost/Users/jonathan/Sites/webact2/test/js/observers_test.js</string>
 				<key>StateType</key>
-				<string>DefaultTab</string>
-			</dict>
-			<dict>
-				<key>DocumentURL</key>
-				<string>file://localhost/Users/jonathan/Sites/webact2/js/observers.js</string>
-				<key>StateType</key>
-				<string>DefaultTab</string>
+				<string>PreviewTab</string>
 			</dict>
 		</array>
 	</dict>
