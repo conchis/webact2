@@ -20,8 +20,7 @@ observers.mixinBroadcaster = function (that) {
     // on the object. If no method_name is specified, a method with the same
     // same as the selector will be called.
 
-    that.addListener = function (broadcaster, selector, listener, method_name) {
-
+    that.addListener = function (selector, listener, method_name) {
 		// Get listeners array for the selector. If none found,
 		// create a new one.
         var listeners = listener_map[selector];
@@ -45,7 +44,7 @@ observers.mixinBroadcaster = function (that) {
     // Removes a specified listener. Note this only works for
     // functions.
 
-    that.removeListener = function (broadcaster, selector, listener) {
+    that.removeListener = function (selector, listener) {
     
         var listeners = listener_map[selector];
         if (listeners === undefined)
@@ -60,7 +59,7 @@ observers.mixinBroadcaster = function (that) {
 
     // Tests if the broadcaster has a specified listener.
 
-    that.hasListener = function (broadcaster, selector, listener) {
+    that.hasListener = function (selector, listener) {
     	// Get listeners for selector
         var listeners = listener_map[selector];
         if (listeners === undefined)
@@ -89,7 +88,7 @@ observers.mixinBroadcaster = function (that) {
     // Broadcasts a message to all listeners
 
     that.broadcast = function (selector) { // Other arguments            
-        sendBroadcast(selector, slice.call(arguments, 1));
+        that.sendBroadcast(selector, slice.call(arguments, 1));
     }
 
 };
