@@ -34,49 +34,9 @@
 		<array>
 			<dict>
 				<key>DocumentURL</key>
-				<string>file://localhost/Users/jonathan/Sites/webact2/index.html</string>
-				<key>StateType</key>
-				<string>DefaultTab</string>
-			</dict>
-			<dict>
-				<key>DocumentURL</key>
-				<string>file://localhost/Users/jonathan/Sites/webact2/css/styles.css</string>
-				<key>StateType</key>
-				<string>DefaultTab</string>
-			</dict>
-			<dict>
-				<key>DocumentURL</key>
-				<string>file://localhost/Users/jonathan/Sites/webact2/js/trees.js</string>
-				<key>StateType</key>
-				<string>DefaultTab</string>
-			</dict>
-			<dict>
-				<key>DocumentURL</key>
 				<string>file://localhost/Users/jonathan/Sites/webact2/js/outlines.js</string>
 				<key>StateType</key>
 				<string>DefaultTab</string>
-			</dict>
-			<dict>
-				<key>DocumentURL</key>
-				<string>file://localhost/Users/jonathan/Sites/webact2/js/paths.js</string>
-				<key>StateType</key>
-				<string>DefaultTab</string>
-			</dict>
-			<dict>
-				<key>DocumentURL</key>
-				<string>file://localhost/Users/jonathan/Sites/webact2/test/js/paths_test.js</string>
-				<key>StateType</key>
-				<string>DefaultTab</string>
-			</dict>
-			<dict>
-				<key>DocumentURL</key>
-				<string>file://localhost/Users/jonathan/Sites/webact2/test/index.html</string>
-				<key>StateType</key>
-				<string>DefaultTab</string>
-			</dict>
-			<dict>
-				<key>StateType</key>
-				<string>PreviewTab</string>
 			</dict>
 		</array>
 	</dict>
