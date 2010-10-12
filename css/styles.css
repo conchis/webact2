@@ -5,22 +5,3 @@
 body, h1, h2, p, li, th, td {
 	font-family: "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
 }
-
-#menue {
-	display: block;
-	list-style-type: none;
-}
-
-#menu li {
-	display: inline;
-	width: 100px;
-}
-
-#menue a {
-	text-decoration: none;
-	font-size: .75em;
-	color: white;
-	background-color: #009;
-	padding: 3px 10px;
-	margin: 0;
-}
