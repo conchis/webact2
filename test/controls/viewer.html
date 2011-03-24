@@ -26,12 +26,6 @@
 @import url("../../css/styles.css");
 @import url("../../css/viewer.css");
 
-#controls {
-    position: absolute;
-    left:530px;
-    top: 80px;
-}
-
 #controls a {
     display: block;
 }
@@ -47,19 +41,6 @@ $(document).ready(function () {
         image_url: "../_images/boston1888"
     });
     viewer.create($("#viewer"));
-    
-    $("#in").click(function () {
-        viewer.zoomIn();
-    });
-    
-    $("#out").click(function () {
-        viewer.zoomOut();
-    });
-    
-    $("#reset").click(function () {
-        viewer.zoomReset();
-    });
-
 });
 
 </script>
@@ -70,12 +51,6 @@ $(document).ready(function () {
 <h1>Image Viewer</h1>
 
 <div id="viewer">
-</div>
-<div id="controls">
-    <a id="in" href="#">Zoom In</a>
-    <a id="out" href="#">Zoom Out</a>
-    <a id="reset" href="#">Reset</a>
-    <div id="slider"></div>
 </div>
 
 </body>

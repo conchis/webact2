@@ -36,3 +36,14 @@
     right: 170px;
     bottom: 20px;
 }
+
+.wa_image_buttons {
+    position: absolute;
+    right: 190px;
+    bottom: 20px;
+}
+
+.wa_image_buttons a {
+    width: 22px;
+    height: 22px;
+}

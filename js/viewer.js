@@ -58,6 +58,9 @@ webact.in_package("viewer", function (package) {
             
             var slider = makeZoomSlider(viewport);
             slider.create(dom_element);
+            
+            var buttons = makeViewerButtons(viewport);
+            buttons.create(dom_element);
         }
 
         viewer.load = function (image_url, dom_element) {
@@ -240,6 +243,67 @@ webact.in_package("viewer", function (package) {
         
         initialize();
         return slider;
+    }
+    
+    
+    var makeViewerButtons = function (viewport) {
+        var buttons = makeControl({});
+        
+        var in_button = null;
+        var out_button = null;
+        var reset_button = null;
+        
+        var zoomIn = function () {
+            viewport.zoomIn();
+        }
+        
+        var zoomOut = function () {
+            viewport.zoomOut();
+        }
+        
+        var zoomReset = function () {
+            viewport.zoomReset();
+        }
+        
+        buttons.generate = function (container) {
+            var dom_element = jQuery("<div/>", {
+                "class": "wa_image_buttons"
+            });
+            container.append(dom_element);
+            
+            in_button = jQuery("<a/>");
+            dom_element.append(in_button);
+            in_button.button({
+                icons: {primary: "ui-icon-zoomin"},
+                text: false,
+                label: "Zoom In"
+            });
+            in_button.click(zoomIn);
+            
+            out_button = jQuery("<a/>");
+            dom_element.append(out_button);
+            out_button.button({
+                icons: {primary: "ui-icon-zoomout"},
+                text: false,
+                label: "Zoom Out",
+                click: zoomOut
+            });
+            out_button.click(zoomOut);
+            
+            reset_button = jQuery("<a/>");
+            dom_element.append(reset_button);
+            reset_button.button({
+                icons: {primary: "ui-icon-refresh"},
+                text: false,
+                label: "Reset",
+                click: zoomReset
+            });
+            reset_button.click(zoomReset);            
+            
+            return dom_element;
+        }
+        
+        return buttons;
     }
 
 });
