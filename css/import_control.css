@@ -1,0 +1,15 @@
+.wa_import {
+	position: absolute;
+	width: 360px;
+	height: 40px;
+    font-size: 12px;
+}
+
+.wa_import_field {
+    width: 200px;
+    height: 14px;
+    font-size: 12px;
+    background-color: #EEE;
+    border: 1px solid #999;
+    margin-left: 5px;
+}

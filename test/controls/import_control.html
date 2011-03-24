@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+	<title>Test Import Control</title>
+	
+<!-- Import jQuery -->
+<script type="text/javascript" src="../../js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="../../js/jquery-ui/js/jquery-ui-1.8.2.custom.min.js"></script>
+
+
+<!-- Import modules -->
+<script type="text/javascript" src="../../js/packages.js"></script>
+<script type="text/javascript" src="../../js/observers.js"></script>
+<script type="text/javascript" src="../../js/paths.js"></script>
+<script type="text/javascript" src="../../js/controls.js"></script>
+<script type="text/javascript" src="../../js/buttons.js"></script>
+<script type="text/javascript" src="../../js/dialogs.js"></script>
+<script type="text/javascript" src="../../js/import_control.js"></script>
+	
+<style type="text/css">
+@import url("../../js/jquery-ui/css/custom-theme/jquery-ui-1.8.2.custom.css");
+@import url("../../css/styles.css");
+@import url("../../css/buttons.css");
+@import url("../../css/dialogs.css");
+@import url("../../css/import_control.css");
+</style>
+
+<script type="text/javascript">
+
+eval(webact.imports("buttons"));
+eval(webact.imports("import_control"));
+
+var import_control;
+
+$(document).ready(function () {
+
+    import_control = makeImportControl({});
+    import_control.create($("#container"));
+});
+
+</script>
+
+</head>
+<body>
+
+<div id="container">
+</div>
+
+</body>
+</html>

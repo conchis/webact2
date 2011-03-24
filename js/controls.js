@@ -1,5 +1,5 @@
 /**
- *  Copyright 2010 Northwestern University.
+ * Copyright 2010 Jonathan A. Smith.
  *
  * Licensed under the Educational Community License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the
@@ -104,7 +104,7 @@ webact.in_package("controls", function (controls) {
 			child.addedTo(this);
 			
 			if (this.dom_element)
-				contained.create(this.dom_contents)				
+				child.create(this.dom_contents)				
 		}
 		
 		// Called when this control is added to a parent. Override.

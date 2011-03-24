@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+	<title>Test Forms</title>
+	
+<!-- Import jQuery -->
+<script type="text/javascript" src="../../js/jquery-1.4.2.min.js"></script>
+
+<!-- Import modules -->
+<script type="text/javascript" src="../../js/packages.js"></script>
+<script type="text/javascript" src="../../js/observers.js"></script>
+<script type="text/javascript" src="../../js/paths.js"></script>
+<script type="text/javascript" src="../../js/controls.js"></script>
+<script type="text/javascript" src="../../js/buttons.js"></script>
+<script type="text/javascript" src="../../js/forms.js"></script>
+	
+<style type="text/css">
+@import url("../../css/styles.css");
+@import url("../../css/buttons.css");
+@import url("../../css/forms.css");
+</style>
+
+<script type="text/javascript">
+
+eval(webact.imports("buttons"));
+eval(webact.imports("forms"));
+
+var form = null;
+var text_item = null;
+var multi_item = null;
+var message_item = null;
+var submit_item = null;
+
+$(document).ready(function () {
+
+    form = makeForm({});
+    form.create($("#container"));
+    
+    message_item = makeMessageItem({});
+    form.add(message_item);
+    
+    text_item = makeTextItem({
+        label: "Testing", 
+        title: "Enter only hex digits in this field",
+        allow: /^[0-9a-fA-F]*$/,
+        required: false,
+        field: "first"
+    });    
+    form.add(text_item);
+    
+    multi_item = makeTextItem({
+        label: "Multi-Row",
+        title: "A test of a multi-row field",
+        rows: 4,
+        field: "second"
+    });
+    form.add(multi_item);
+    
+    submit_item = makeSubmitItem({});
+    form.add(submit_item);
+    
+    form.addListener("submit", function () {
+        var data = form.getData();
+        console.log("data:", data);
+    });
+    
+    form.setData({first: "0000", second: "-- clear --"});
+    
+});
+
+
+</script>
+
+</head>
+<body>
+
+<h1>Forms Test</h1>
+
+<div id="container">
+</div>
+
+</body>
+</html>

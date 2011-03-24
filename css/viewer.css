@@ -1,0 +1,32 @@
+
+
+.wa_image_viewer {
+    position: absolute;
+    overflow: hidden;
+}
+
+.wa_image_navigator {
+    position: absolute;
+    width: 150px;
+    overflow: auto;
+    margin: 0;
+    padding: 0;
+    right: 10px;
+    bottom: 10px;
+    overflow: hidden;
+    border: 1px dotted #818181;
+}
+
+.wa_image_thumbnail {
+    position: relative;
+    width: 150px;
+    margin: 0;
+    padding: 0;
+}
+
+.wa_image_indicator {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    border: 1px outset red;
+}

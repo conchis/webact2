@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?><ppad:tiled-image bgcolor="0xFFFFFF" layers="12" resolution_multiplier="1.41421356237" tile_format="jpg" xmlns:ppad="http://dewey.at.northwestern.edu/ppad-defs.xml#"><ppad:dimensions height="10761" property="image_size" width="8672"/><ppad:dimensions height="255" property="tile_size" width="255"/><ppad:transform property="transform">
+	1 0 0
+	0 1 0
+	0 0 1
+</ppad:transform></ppad:tiled-image>

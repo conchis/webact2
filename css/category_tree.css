@@ -45,6 +45,11 @@
 
 /* Open Branches */
 
+wa_ctree_open {
+	list-style: none;
+	font-size: 13px;
+}
+
 .wa_ctree_open > span {
 	font-weight: bold;
 	border-top: 1px solid #FFF;
@@ -76,7 +81,12 @@
 	padding-left: 60px;
 }
 
-/* Close Branches */
+/* Closed Branches */
+
+.wa_ctree_close {
+	list-style: none;
+	font-size: 13px;
+}
 
 .wa_ctree_close > span {
 	font-weight: bold;
@@ -119,6 +129,10 @@
 }
 
 .wa_ctree_item {
+	list-style: none;
+	margin: 0;
+	padding-left: 0;
+	font-size: 13px;
 }
 
 .wa_ctree_selected {

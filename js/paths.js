@@ -1,5 +1,5 @@
 /**
- *  Copyright 2010 Northwestern University.
+ * Copyright 2010 Jonathan A. Smith.
  *
  * Licensed under the Educational Community License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the
