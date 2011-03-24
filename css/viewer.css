@@ -30,3 +30,9 @@
     top: 0px;
     border: 1px outset red;
 }
+
+.wa_image_slider {
+    position: absolute;
+    right: 170px;
+    bottom: 20px;
+}

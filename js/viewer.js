@@ -25,6 +25,99 @@ webact.in_package("viewer", function (package) {
     eval(webact.imports("tiled_image"));
     eval(webact.imports("controls"));
     
+    package.makeViewer = function (options) {
+     
+		var viewer = makeControl(options);
+		
+		var width  = options.width;
+		var height = options.height;
+		
+		var image_url = options.image_url;
+		var image     = null;
+		var viewport  = null;
+		
+		var is_panning = false;
+		
+        viewer.generate = function (container) {
+            var dom_element = jQuery("<div/>", {
+            	"class": "wa_image_viewer"
+            });
+            dom_element.css("width", width);
+            dom_element.css("height", height);
+            container.append(dom_element);
+            if (options.css)
+            	dom_element.addClass(options.css);
+            dom_element.data("_control", this);
+            viewer.load(image_url, dom_element);
+            return dom_element;
+        }
+        
+        var generateControls = function (dom_element) {
+            var navigator = makeNavigator(viewport, image_url);
+            navigator.create(dom_element);
+            
+            var slider = makeZoomSlider(viewport);
+            slider.create(dom_element);
+        }
+
+        viewer.load = function (image_url, dom_element) {
+            loadPyramid(image_url, function (pyramid) {
+                viewport = makeViewport(pyramid.dimensions(), 
+                    makeDimensions(width, height)); 
+                image = makeTiledImage(image_url, pyramid, viewport);       
+                image.generate(dom_element, dom_element);
+                attachEvents(dom_element);               
+                generateControls(dom_element);
+            });
+        }
+        
+        var attachEvents = function (element) {    
+            
+            element.mousedown(function (event) {
+                is_panning = true;
+                var mouse_point = makePoint(event.pageX, event.pageY);
+                viewport.startPan(mouse_point);
+            });
+            
+            element.mousemove(function (event) {
+                if (!is_panning) return;
+                var mouse_point = makePoint(event.pageX, event.pageY);
+                viewport.pan(mouse_point);
+            });
+            
+            element.mouseup(function () {
+                is_panning = false;
+                viewport.endPan();
+            });
+        }
+        
+        viewer.canZoomIn = function () {
+            return viewport.canZoomIn();
+        }
+        
+        viewer.zoomIn = function () {
+            return viewport.zoomIn();
+        }
+        
+        viewer.canZoomOut = function () {
+            return viewport.canZoomOut();
+        }
+        
+        viewer.zoomOut = function () {
+            viewport.zoomOut();
+        }
+        
+        viewer.zoomReset = function () {
+            viewport.zoomReset();
+        }
+        
+        viewer.setScale = function (scale) {
+            viewport.setScale(scale);
+        }
+		
+		return viewer;
+    };
+    
     var makeNavigator = function (viewport, image_url) {
         var navigator = makeControl({});
         
@@ -114,95 +207,39 @@ webact.in_package("viewer", function (package) {
     }
     package.makeNavigator = makeNavigator;
     
-    package.makeViewer = function (options) {
-     
-    		var viewer = makeControl(options);
-    		
-    		var width  = options.width;
-    		var height = options.height;
-    		
-    		var image_url = options.image_url;
-    		var image     = null;
-    		var viewport  = null;
-    		
-    		var is_panning = false;
-    		
-            viewer.generate = function (container) {
-                var dom_element = jQuery("<div/>", {
-                	"class": "wa_image_viewer"
-                });
-                dom_element.css("width", width);
-                dom_element.css("height", height);
-                container.append(dom_element);
-                if (options.css)
-                	dom_element.addClass(options.css);
-                dom_element.data("_control", this);
-                viewer.load(image_url, dom_element);
-                return dom_element;
-            }
+    var makeZoomSlider = function (viewport) {
+        var slider = makeControl({});
+        
+        var initialize = function () {
+            viewport.addListener("changed", slider);
+        }
+        
+        slider.generate = function (container) {
+            var dom_element = jQuery("<div/>", {
+                "class": "wa_image_slider"
+            });
+            container.append(dom_element);
             
-            var generateNavigator = function (dom_element) {
-                var navigator = makeNavigator(viewport, image_url);
-                navigator.create(dom_element);
-            }
-
-            viewer.load = function (image_url, dom_element) {
-                loadPyramid(image_url, function (pyramid) {
-                    viewport = makeViewport(pyramid.dimensions(), 
-                        makeDimensions(width, height)); 
-                    image = makeTiledImage(image_url, pyramid, viewport);       
-                    image.generate(dom_element, dom_element);
-                    attachEvents(dom_element);
-                             
-                    generateNavigator(dom_element);
-                });
-            }
+            dom_element.slider({
+                orientation: 'vertical',
+                slide: adjustZoom
+            });
             
-            var attachEvents = function (element) {    
-                
-                element.mousedown(function (event) {
-                    is_panning = true;
-                    var mouse_point = makePoint(event.pageX, event.pageY);
-                    viewport.startPan(mouse_point);
-                });
-                
-                element.mousemove(function (event) {
-                    if (!is_panning) return;
-                    var mouse_point = makePoint(event.pageX, event.pageY);
-                    viewport.pan(mouse_point);
-                });
-                
-                element.mouseup(function () {
-                    is_panning = false;
-                    viewport.endPan();
-                });
-            }
-            
-            viewer.canZoomIn = function () {
-                return viewport.canZoomIn();
-            }
-            
-            viewer.zoomIn = function () {
-                return viewport.zoomIn();
-            }
-            
-            viewer.canZoomOut = function () {
-                return viewport.canZoomOut();
-            }
-            
-            viewer.zoomOut = function () {
-                viewport.zoomOut();
-            }
-            
-            viewer.zoomReset = function () {
-                viewport.zoomReset();
-            }
-            
-            viewer.setScale = function (scale) {
-                viewport.setScale(scale);
-            }
-    		
-    		return viewer;
-    };
+            return dom_element;
+        }
+        
+        var adjustZoom = function (event, ui) {
+            viewport.setScale(ui.value / 100.0);
+        }
+        
+        slider.changed = function () {
+            var dom_element = slider.dom_element;
+            dom_element.slider("option", "value", 
+                Math.round(100 * viewport.getScale()));
+        }
+        
+        initialize();
+        return slider;
+    }
 
 });

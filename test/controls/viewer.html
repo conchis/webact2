@@ -40,10 +40,6 @@
 
 <script type="text/javascript">
 
-//eval(webact.imports("buttons"));
-
-
-
 $(document).ready(function () {
     eval(webact.imports("viewer"));
     var viewer = makeViewer({
@@ -51,10 +47,6 @@ $(document).ready(function () {
         image_url: "../_images/boston1888"
     });
     viewer.create($("#viewer"));
-    
-    var adjustZoom = function (event, ui) {
-        viewer.setScale(ui.value / 100.0);
-    }
     
     $("#in").click(function () {
         viewer.zoomIn();
@@ -66,11 +58,6 @@ $(document).ready(function () {
     
     $("#reset").click(function () {
         viewer.zoomReset();
-    });
-    
-    $("#slider").slider({
-        orientation: 'vertical',
-        slide: adjustZoom
     });
 
 });
