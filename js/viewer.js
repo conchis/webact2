@@ -214,7 +214,7 @@ webact.in_package("viewer", function (package) {
         var slider = makeControl({});
         
         var initialize = function () {
-            viewport.addListener("changed", slider);
+            viewport.addListener("zoomed", slider);
         }
         
         slider.generate = function (container) {
@@ -235,7 +235,7 @@ webact.in_package("viewer", function (package) {
             viewport.setScale(ui.value / 100.0);
         }
         
-        slider.changed = function () {
+        slider.zoomed = function () {
             var dom_element = slider.dom_element;
             dom_element.slider("option", "value", 
                 Math.round(100 * viewport.getScale()));
@@ -254,7 +254,7 @@ webact.in_package("viewer", function (package) {
         var reset_button = null;
         
         var initialize = function () {
-            viewport.addListener("changed", buttons);
+            viewport.addListener("zoomed", buttons);
         }
         
         var zoomIn = function () {
@@ -308,7 +308,7 @@ webact.in_package("viewer", function (package) {
             return dom_element;
         }
         
-        buttons.changed = function () {
+        buttons.zoomed = function () {
             in_button.button( viewport.canZoomIn()  ? "enable" : "disable");
             out_button.button(viewport.canZoomOut() ? "enable" : "disable");
         }

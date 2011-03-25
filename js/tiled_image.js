@@ -184,6 +184,7 @@ webact.in_package("tiled_image", function (package) {
         
         var initialize = function () {
             viewport.addListener("changed", tiled_image);
+            viewport.addListener("zoomed", tiled_image, "changed");
         }
         
         var generate = function (container) {

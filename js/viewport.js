@@ -170,7 +170,7 @@ webact.in_package("viewport", function (package) {
             if (scale != new_scale) {
                 scale = new_scale;
                 update();
-                this.broadcast("changed");
+                this.broadcast("zoomed");
             }
         }
         
