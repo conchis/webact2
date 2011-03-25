@@ -141,6 +141,8 @@ webact.in_package("viewer", function (package) {
 
             height = Math.round(scene_size.height * scale);
             viewport.addListener("changed", navigator);
+            viewport.addListener("zoomed", navigator, "changed");
+            
         }
         
         navigator.generate = function (container) {
