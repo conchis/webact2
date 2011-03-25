@@ -253,6 +253,10 @@ webact.in_package("viewer", function (package) {
         var out_button = null;
         var reset_button = null;
         
+        var initialize = function () {
+            viewport.addListener("changed", buttons);
+        }
+        
         var zoomIn = function () {
             viewport.zoomIn();
         }
@@ -298,11 +302,18 @@ webact.in_package("viewer", function (package) {
                 label: "Reset",
                 click: zoomReset
             });
-            reset_button.click(zoomReset);            
+            reset_button.click(zoomReset); 
             
+            buttons.changed();                    
             return dom_element;
         }
         
+        buttons.changed = function () {
+            in_button.button( viewport.canZoomIn()  ? "enable" : "disable");
+            out_button.button(viewport.canZoomOut() ? "enable" : "disable");
+        }
+        
+        initialize();
         return buttons;
     }
 

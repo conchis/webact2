@@ -13,7 +13,7 @@
 		<key>StateType</key>
 		<string>ProjectWindow</string>
 		<key>TopLeftPoint</key>
-		<string>{261, 976}</string>
+		<string>{60, 878}</string>
 	</dict>
 	<key>com.macrabbit.Espresso.FileManager.DisclosureCollapsed</key>
 	<false/>
@@ -22,7 +22,7 @@
 		<key>ExpandedURLs</key>
 		<array>
 			<string>file://localhost/Users/jonathan/Sites/webact2/css</string>
-			<string>file://localhost/Users/jonathan/Sites/webact2/js</string>
+			<string>file://localhost/Users/jonathan/Sites/webact2/js/jquery-ui</string>
 			<string>file://localhost/Users/jonathan/Sites/webact2/test/controls</string>
 		</array>
 	</dict>
@@ -59,8 +59,10 @@
 				<string>file:///Users/jonathan/Sites/webact2/test/controls/viewer.html</string>
 			</dict>
 			<dict>
+				<key>DocumentURL</key>
+				<string>file://localhost/Users/jonathan/Sites/webact2/js/viewport.js</string>
 				<key>StateType</key>
-				<string>PreviewTab</string>
+				<string>DefaultTab</string>
 			</dict>
 		</array>
 	</dict>

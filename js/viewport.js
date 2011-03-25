@@ -209,7 +209,7 @@ webact.in_package("viewport", function (package) {
         }
         
         viewport.canZoomOut = function () {
-            return scale >= minimum_scale;
+            return scale > minimum_scale;
         }
         
         // center is optional
