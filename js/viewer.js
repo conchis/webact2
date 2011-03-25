@@ -171,31 +171,36 @@ webact.in_package("viewer", function (package) {
             return dom_element;
         }
         
+        var startTracking = function (event) {
+            event.preventDefault(true);
+            event.stopPropagation();
+            var offset = navigator.dom_element.offset();
+            left = offset.left;
+            top = offset.top;
+            is_tracking = true;
+            track(event);
+        }
+        
+        var track = function (event) {
+            if (!is_tracking) return;
+            event.preventDefault(true);
+            event.stopPropagation();
+            var center = makePoint(
+                Math.round((event.pageX - left) / scale), 
+                Math.round((event.pageY - top ) / scale));
+            viewport.centerOn(center);
+        }
+        
+        var stopTracking = function (event) {
+            event.preventDefault(true);
+            event.stopPropagation();
+            is_tracking = false;
+        }
+        
         var attachEvents = function (dom_element) {
-            dom_element.mousedown(function (event) {
-                event.preventDefault(true);
-                event.stopPropagation();
-                var offset = dom_element.offset();
-                left = offset.left;
-                top = offset.top;
-                is_tracking = true;
-            });
-            
-            dom_element.mousemove(function (event) {
-                if (!is_tracking) return;
-                event.preventDefault(true);
-                event.stopPropagation();
-                var center = makePoint(
-                    Math.round((event.pageX - left) / scale), 
-                    Math.round((event.pageY - top ) / scale));
-                viewport.centerOn(center);
-            });
-            
-            dom_element.mouseup(function (event) {
-                event.preventDefault(true);
-                event.stopPropagation();
-                is_tracking = false;
-            });
+            dom_element.mousedown(startTracking);    
+            dom_element.mousemove(track); 
+            dom_element.mouseup(stopTracking);
         }
         
         navigator.changed = function () {
@@ -306,7 +311,7 @@ webact.in_package("viewer", function (package) {
             });
             reset_button.click(zoomReset); 
             
-            buttons.changed();                    
+            buttons.zoomed();                    
             return dom_element;
         }
         
