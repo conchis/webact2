@@ -129,7 +129,7 @@ webact.in_package("tiled_image", function (package) {
 		    var desired_scale = viewport.getScale();
             
             var origin = computeOrigin(view_rectangle);
-            var scaled_tile_size = Math.round(pyramid.tile_size * (desired_scale / scale) + 0.5);	
+            var scaled_tile_size = pyramid.tile_size * (desired_scale / scale);	
             var offset = computeOffset(origin, view_rectangle, scaled_tile_size, desired_scale);
 	
             layer.hide();
