@@ -47,3 +47,10 @@
     width: 22px;
     height: 22px;
 }
+
+.wa_image_selector {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border: 1px solid #00A;
+}

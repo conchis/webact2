@@ -25,9 +25,14 @@ webact.in_package("viewer", function (package) {
     eval(webact.imports("tiled_image"));
     eval(webact.imports("controls"));
     
+    // Constants for viewer mode
+    var SELECT_MODE = 0;
+    var PAN_MODE    = 1;
+    
     package.makeViewer = function (options) {
-     
 		var viewer = makeControl(options);
+		
+		var mode = SELECT_MODE;
 		
 		var width  = options.width;
 		var height = options.height;
@@ -36,7 +41,8 @@ webact.in_package("viewer", function (package) {
 		var image     = null;
 		var viewport  = null;
 		
-		var is_panning = false;
+		// Selection rectangle
+		var selector = null;
 		
         viewer.generate = function (container) {
             var dom_element = jQuery("<div/>", {
@@ -53,6 +59,9 @@ webact.in_package("viewer", function (package) {
         }
         
         var generateControls = function (dom_element) {
+            selector = makeSelector(viewer, viewport);
+            selector.create(dom_element);
+
             var navigator = makeNavigator(viewport, image_url);
             navigator.create(dom_element);
             
@@ -61,6 +70,7 @@ webact.in_package("viewer", function (package) {
             
             var buttons = makeViewerButtons(viewport);
             buttons.create(dom_element);
+
         }
 
         viewer.load = function (image_url, dom_element) {
@@ -75,23 +85,33 @@ webact.in_package("viewer", function (package) {
         }
         
         var attachEvents = function (element) {    
+            element.mousedown(onMouseDown);   
+        }
+        
+        var onMouseDown = function (event) {
+            var element = viewer.dom_element;
+            var mouse_point = makePoint(event.pageX, event.pageY);
             
-            element.mousedown(function (event) {
-                is_panning = true;
-                var mouse_point = makePoint(event.pageX, event.pageY);
-                viewport.startPan(mouse_point);
-            });
+            if (mode == PAN_MODE) {
+                viewport.startPan(mouse_point);  
+                element.bind("mousemove", onPan);
+                jQuery(document).bind("mouseup", onPanEnd);
+            }
+            else if (mode == SELECT_MODE)
+                selector.select(mouse_point, event);
+        }
+        
+        var onPan = function (event) {
+            var mouse_point = makePoint(event.pageX, event.pageY);
+            viewport.pan(mouse_point);
+        }
+        
+        var onPanEnd = function (event) {
+            var element = viewer.dom_element;
+            viewport.endPan();
             
-            element.mousemove(function (event) {
-                if (!is_panning) return;
-                var mouse_point = makePoint(event.pageX, event.pageY);
-                viewport.pan(mouse_point);
-            });
-            
-            element.mouseup(function () {
-                is_panning = false;
-                viewport.endPan();
-            });
+            element.unbind("mousemove", onPan);
+            jQuery(document).unbind("mouseup", onPanEnd);          
         }
         
         viewer.canZoomIn = function () {
@@ -322,6 +342,57 @@ webact.in_package("viewer", function (package) {
         
         initialize();
         return buttons;
+    }
+    
+    var makeSelector = function (viewer, viewport) {
+        var self = makeControl({});
+        
+        var offset = null;
+        var start = null;
+        
+        self.generate = function (container) {
+            var dom_element = jQuery("<div/>", {
+                "class": "wa_image_selector"
+            });
+            container.append(dom_element);
+            dom_element.hide();
+            return dom_element;
+        }
+        
+        self.select = function (start_point) {
+            start = start_point;
+            offset = viewer.dom_element.offset();
+            var element = self.dom_element;
+            element.css("left", start_point.x - offset.left);
+            element.css("top", start_point.y - offset.top);
+            element.css("width", 0);
+            element.css("height", 0); 
+            self.show();
+            
+            viewer.dom_element.bind("mousemove", onMouseMove);
+            jQuery(document).bind("mouseup", onMouseUp);           
+        }
+
+        var onMouseMove = function (event) {
+            var left   = Math.min(start.x, event.pageX) - offset.left;
+            var top    = Math.min(start.y, event.pageY) - offset.top;
+            var width  = Math.abs(event.pageX - start.x);
+            var height = Math.abs(event.pageY - start.y);
+            var element = self.dom_element;
+            
+            element.css("left", left);
+            element.css("top", top);
+            element.css("width", width);
+            element.css("height", height);      
+        }
+        
+        var onMouseUp = function () {
+            viewer.dom_element.unbind("mousemove", onMouseMove);
+            jQuery(document).unbind("mouseup", onMouseUp);  
+            self.hide();
+        }
+        
+        return self;
     }
 
 });
