@@ -22,36 +22,6 @@ webact.in_package("viewport", function (package) {
     eval(webact.imports("observers"));
     eval(webact.imports("geometry"));
     
-    var makeViewAnimator = function (viewport) {
-        var animator = {};
-        
-        var is_animating = false;
-        
-        var target_scale = 0;
-        
-        var target_scroll = null;
-        
-        var steps = 0;
-        
-        var step_count = 0;
-        
-        animator.isAnimating = function () {
-            return is_animating;
-        }
-        
-        animator.zoomTo = function (scale, scroll) {
-            scroll = scroll || null;
-            target_scale = scale;
-            target_scroll = scroll;
-            is_animating = true;
-        }
-        
-        animator.step = function () {
-        }
-        
-        return animator;
-    }
-    
     package.makeViewport = function (scene_size, view_size) {
         var viewport = makeBroadcaster();
         
@@ -94,6 +64,9 @@ webact.in_package("viewport", function (package) {
         // Point start of pan in view coordinates
         var pan_start = null;
         
+        // Animator animates zoom and center changes over time
+        var animator = makeZoomAnimator(viewport);
+        
         var initialize = function () {
             initializeCoordinates();
             update();
@@ -124,6 +97,12 @@ webact.in_package("viewport", function (package) {
             view_polygon = view_size.polygon().project(scene_transform);	
             clipped_view_polygon = view_polygon.clip(scene_size.rectangle());
         }
+    
+        viewport.updateView = function (new_scale, new_center) {
+            scale = new_scale;
+            center = new_center;
+            update();
+        }
         
         // ** Accessors
         
@@ -144,7 +123,7 @@ webact.in_package("viewport", function (package) {
         }
         
         viewport.getCenter = function () { 
-            return scroll_center; 
+            return center; 
         }
         
         viewport.getView = function () {
@@ -173,7 +152,7 @@ webact.in_package("viewport", function (package) {
                 this.broadcast("zoomed");
             }
         }
-        
+   
         viewport.setRotation = function (new_rotation) {
             if (new_rotation < 0)
                 new_rotation += 2 * Math.PI;
@@ -192,11 +171,17 @@ webact.in_package("viewport", function (package) {
             update();
             viewport.broadcast("changed");    
         }
-        
+
         viewport.viewBox = function (area) {
         }
         
         // ** Zoom
+        
+        var snapToLayer = function(scale) {
+         	var level = Math.ceil(Math.log(scale) / Math.log(ZOOM_STEP));
+         	var raw_scale = Math.pow(ZOOM_STEP, level);
+         	return Math.max(minimum_scale, Math.min(raw_scale, 1.0));
+        }
         
         viewport.canZoomIn = function () {
             return scale < 1.0;
@@ -204,8 +189,10 @@ webact.in_package("viewport", function (package) {
         
         // center is optional
         viewport.zoomIn = function (center) {
-            if (scale < 1.0)
-                viewport.setScale(scale * ZOOM_STEP);
+            var new_scale = snapToLayer(scale * ZOOM_STEP);
+            if (new_scale >= 1.0) return;
+            animator.zoomTo(new_scale, center);
+            //viewport.setScale(new_scale);
         }
         
         viewport.canZoomOut = function () {
@@ -214,12 +201,14 @@ webact.in_package("viewport", function (package) {
         
         // center is optional
         viewport.zoomOut = function (center) {
-            if (scale >= minimum_scale)
-                viewport.setScale(scale / ZOOM_STEP);
+            var new_scale = snapToLayer(scale / ZOOM_STEP);
+            if (new_scale < minimum_scale) return;
+            animator.zoomTo(new_scale, center);
+            //viewport.setScale(new_scale);
         }
         
         viewport.zoomReset = function () {
-            viewport.setScale(minimum_scale)
+            animator.zoomTo(minimum_scale, center);
         }
         
         viewport.startZoom = function () {
@@ -279,6 +268,76 @@ webact.in_package("viewport", function (package) {
         
         initialize();
         return viewport;
-    }   
+    }  
+    
+    var makeZoomAnimator = function (viewport) {
+        var self = {};
+        
+        var DELAY = 1; // Milliseconds
+        
+        var timer = null;
+        
+        var target_scale = null;
+        
+        var target_center = null;
+        
+        var steps = 0;
+        
+        var step_count = 0;
+        
+        self.zoomTo = function (new_scale, new_center) {
+            target_scale = new_scale || viewport.getScale();
+            target_center = new_center || viewport.getCenter();
+            start();
+        }
+        
+        var start = function () {
+            // Start only if animation is not underway
+            if (timer != null) return;
+            
+            // Compute number of steps
+            var scale = viewport.getScale();
+            var level = Math.ceil(Math.log(scale) / Math.log(Math.SQRT2));	
+            var goal_level = Math.ceil(Math.log(target_scale) / Math.log(Math.SQRT2));
+            steps = Math.abs(level - goal_level) + 2; 
+            step_count = 0;
+                     
+             // Initiate Timer
+            timer = setTimeout(step, DELAY);            
+        }
+        
+        var step = function () {
+            step_count += 1;
+            if (step_count < steps) {
+                update();
+                timer = setTimeout(step, DELAY);
+            }
+            else {
+                finish();
+                timer = null;
+            }  
+        }
+        
+        var update = function () {
+            var scale = viewport.getScale();
+            var new_scale = (target_scale + scale) / 2;
+            
+            var center = viewport.getCenter();
+            var new_center = makePoint(
+                center.x + (target_center.x - center.x) / 2,
+                center.y + (target_center.y - center.y) / 2
+            );
+            
+            viewport.updateView(new_scale, new_center);
+            viewport.broadcast("zoomed"); 
+        }
+        
+        var finish = function () {
+            viewport.updateView(target_scale, target_center);
+            viewport.broadcast("zoomed");
+        }
+        
+        return self;
+    } 
 
 });
