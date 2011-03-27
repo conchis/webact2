@@ -1,4 +1,7 @@
-/**
+/*jslint newcap: false, onevar: false, evil: true */
+/*global webact: true, jQuery: false, makeBroadcaster: false */
+
+/*
  * Copyright 2011 Jonathan A. Smith.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,7 +30,7 @@ webact.in_package("controls", function (controls) {
 	// controls. controls:
 	//
 	// 1. Correspond to a jQuery object called dom_element
-	// that is used to quickly find the DOM elements that
+	// self is used to quickly find the DOM elements self
 	// make up the control.
 	//
 	// 2. Provide a means for generating ids based on a
@@ -42,25 +45,25 @@ webact.in_package("controls", function (controls) {
 	controls.makeControl = function (options) {
 	
 		options = options || {};
-		var that = makeBroadcaster();
+		var self = makeBroadcaster();
 		
 		// Class name used to generate ids
-		that.class_name = "Control";
+		self.class_name = "Control";
 		
 		// jQuery for finding the dom element corresponding to this control. 
 		// Must be returned by the generate method.
-		that.dom_element = null;
+		self.dom_element = null;
 		
-		// jQuery for finding the dom element that contains the generated
+		// jQuery for finding the dom element self contains the generated
 		// DOM elements for all contained controls. If null, defaults to
 		// dom_element.
-		that.dom_contents = null;
+		self.dom_contents = null;
 		
 		// Parent control (if any)
-		that.parent = null;
+		self.parent = null;
 		
 		// Array of nested controls (if any)
-		that.contents = null;
+		self.contents = null;
 		
 		// *** Id Generation
 
@@ -70,10 +73,11 @@ webact.in_package("controls", function (controls) {
 		// name is provided, the value will be the class
 		// name followed by a counter.
 		
-		that.getId = function (suffix) {
+		self.getId = function (suffix) {
 			// If an id has been generated, use it
-			if (this.id) 
+			if (this.id) {
 				return this.id;
+			}
 		
 			// If id specified in option, use specified value
 			if (options.id) {
@@ -87,35 +91,38 @@ webact.in_package("controls", function (controls) {
 			id_counters[class_name] = count + 1;
 			this.id = this.class_name + "_" + count;			
 			return this.id;
-		}
+		};
 		
 		// *** Contained Controls
 		
 		// Adds a child control to this control
-		that.add = function (child) {
-			if (child.parent != null)
+		self.add = function (child) {
+			if (child.parent !== null) {
 				throw new Error("control added twice");
+			}
 			this.contents = this.contents || [];
 			this.contents.push(child);
 			child.parent = this;
 			child.addedTo(this);
 			
-			if (this.dom_element)
-				child.create(this.dom_contents)				
-		}
+			if (this.dom_element) {
+				child.create(this.dom_contents);
+			}			
+		};
 		
 		// Called when this control is added to a parent. Override.
-		that.addedTo = function (parent) {
-		}
+		self.addedTo = function (parent) {
+		};
 		
 		// Detaches a control from its parent. If passed a child control
 		// detaches it from this control, otherwise removes this from
 		// its parent.
-		that.detach = function (child) {
+		self.detach = function (child) {
 			if (child) {
 				// Remove HTML if generated
-				if (child.dom_element)
+				if (child.dom_element) {
 					child.remove();
+				}
 					
 				// Remove reference between parent and child
 				var children = this.contents;
@@ -130,17 +137,19 @@ webact.in_package("controls", function (controls) {
 				// Tell child it has been removed
 				child.detachedFrom(this);
 			}
-			else
+			else {
 				this.parent.detach(this);
-		}
+			}
+		};
 		
 		// Called when this control is removed from a parent.
-		that.detachedFrom = function (parent) {
-			if (this.dom_element)
+		self.detachedFrom = function (parent) {
+			if (this.dom_element) {
 				this.dom_element.remove();
+			}
 			this.dom_element = null;
 			this.parent = null;
-		}
+		};
 		
 		// Should be overriden to add control
 		
@@ -148,31 +157,33 @@ webact.in_package("controls", function (controls) {
 		
 		// Generates HTML for the control, returning a new
 		// element. It may also set this.dom_contents to another
-		// dom element that will contain the HTML for all child
+		// dom element self will contain the HTML for all child
 		// controls.
-		that.generate = function (container) {
+		self.generate = function (container) {
 			var dom_element = jQuery("<div/>", {id: this.getId()});
 			container.append(dom_element);
-		}
+		};
 		
 		// Override to update control apearance
-		that.update = function () {
-		}
+		self.update = function () {
+		};
 		
 		// Generates HTML for all contained controls. Generated HTML 
 		// is appended to this control's dom element.
 		var generateContents = function () {
 			var contents = this.contents || [];
 			var container = this.dom_contents;
-			for (var index = 0; index < contents.length; index += 1)
+			for (var index = 0; index < contents.length; index += 1) {
 				contents[index].create(container);
-		}
+			}
+		};
 		
 		// Creates the HTML for this control and all contained controls
 		// inside a specified container. Container should be a jQuery.	
-		that.create = function (container) {
-			if (this.dom_element != null)
+		self.create = function (container) {
+			if (this.dom_element !== null) {
 				throw new Error("Control already generated: " + this.getId());
+			}
 			
 			this.dom_contents = null;	
 			this.dom_element = this.generate(container);
@@ -180,12 +191,12 @@ webact.in_package("controls", function (controls) {
 			generateContents();
 			
 			this.update();
-		}
+		};
 		
 		// The opposite of generate -- this removes all generated HTML
 		// from child and this component. Generate may be called at a
 		// later time to re-generate HTML for this component.
-		that.remove = function () {
+		self.remove = function () {
 			var dom_element = this.dom_element;
 			if (dom_element) {
 				dom_element.remove();
@@ -193,20 +204,24 @@ webact.in_package("controls", function (controls) {
 				this.dom_contents = null;
 			}
 		
-		}
+		};
 		
 		// *** Visibility
 		
 		// Hide this control's element if any
-		that.hide = function () {
-			if (this.dom_element) this.dom_element.hide();
-		}
+		self.hide = function () {
+			if (this.dom_element) {
+			    this.dom_element.hide();
+			}
+		};
 		
 		// Show this control's element if any
-		that.show = function () {
-			if (this.dom_element) this.dom_element.show();
-		}
+		self.show = function () {
+			if (this.dom_element) {
+			    this.dom_element.show();
+			}
+		};
 			
-		return that;
-	}
+		return self;
+	};
 });

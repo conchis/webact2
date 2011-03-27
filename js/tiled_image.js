@@ -1,4 +1,7 @@
-/**
+/*jslint newcap: false, onevar: false, evil: true */
+/*global webact: true, jQuery: false, makePoint: false */
+
+/*
  * Copyright 2011 Jonathan A. Smith.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,25 +17,26 @@
  * limitations under the License.
  */
 
-webact.in_package("tiled_image", function (package) {
+webact.in_package("tiled_image", function (tiled_image) {
 
     eval(webact.imports("geometry"));
     eval(webact.imports("pyramid"));
 
     var pad = function (number, width) {
         var text = "" + number;
-        while (text.length < width)
+        while (text.length < width) {
             text = "0" + text;
+        }
         return text;
-    }
+    };
     
-    // Tile
+    // Tile - Prototype Class
     
     var tile = {layer: 0, column: 0, row: 0, tile_url: null, pyramid: null};
     
     var makeTile = function (image_url, layer, column, row, pyramid) {
-        var tile_url = image_url + "/layer" + pad(layer, 4)
-            + "/tile" + pad(row, 4) + "n" + pad(column, 4) + ".jpg";
+        var tile_url = image_url + "/layer" + pad(layer, 4) +
+            "/tile" + pad(row, 4) + "n" + pad(column, 4) + ".jpg";
         return webact.create(tile, {
             layer: layer,
             column: column,
@@ -40,8 +44,8 @@ webact.in_package("tiled_image", function (package) {
             tile_url: tile_url,
             pyramid: pyramid
         });
-    }
-    package.makeTile = makeTile;
+    };
+    tiled_image.makeTile = makeTile;
     
     tile.generate = function (container) {
         var element = jQuery("<img/>", {
@@ -54,13 +58,13 @@ webact.in_package("tiled_image", function (package) {
         this.element = element;
         element.hide();
         this.update();
-    }
+    };
     
     tile.update = function () {
         var element = this.element;
         element.css("left", this.column * 256);
         element.css("top", this.row * 256);
-    }
+    };
     
     tile.draw = function (x, y, size) {
         var element = this.element;
@@ -69,11 +73,11 @@ webact.in_package("tiled_image", function (package) {
         element.css("width", size);
         element.css("height", size);    
         this.element.show();
-    }
+    };
     
     tile.hide = function () {
         this.element.hide();
-    }
+    };
     
     // Layer
     
@@ -89,37 +93,52 @@ webact.in_package("tiled_image", function (package) {
         
         var shown = [];
         
+        var initializeTiles = function () {
+            tiles = [];
+            for (var row = 0; row < rows; row += 1) {
+                var row_tiles = [];
+                for (var col = 0; col < columns; col += 1) {
+                    row_tiles.push(null);
+                }
+                tiles.push(row_tiles); 
+            }
+        };
+        
         var initialize = function () {
             var grid_size = pyramid.tileGridSize(layer_number);
             columns = grid_size.width;
             rows = grid_size.height;
             scale = pyramid.scaleForLayer(layer_number);
             initializeTiles();
-        }
-        
-        var initializeTiles = function () {
-            tiles = [];
-            for (var row = 0; row < rows; row += 1) {
-                var row_tiles = [];
-                for (var col = 0; col < columns; col += 1)
-                    row_tiles.push(null);
-                tiles.push(row_tiles); 
-            }
-        }
+        };
         
         var computeOrigin = function (visible_rectangle) {
-        	var left = pyramid.tileColumn(visible_rectangle.left, layer_number);
-        	left = Math.max(0, Math.min(left, columns - 1));
-        	var top = pyramid.tileRow(visible_rectangle.top, layer_number);
-        	top = Math.max(0, Math.min(top, rows - 1));
-        	return makePoint(left, top);
-        }
+            var left = pyramid.tileColumn(visible_rectangle.left, layer_number);
+            left = Math.max(0, Math.min(left, columns - 1));
+            var top = pyramid.tileRow(visible_rectangle.top, layer_number);
+            top = Math.max(0, Math.min(top, rows - 1));
+            return makePoint(left, top);
+        };
         
         var computeOffset = function (origin, visible_rectangle, scaled_tile_size, desired_scale) {
-        	var left = (origin.x * scaled_tile_size) - visible_rectangle.left * desired_scale;
-        	var top  = (origin.y * scaled_tile_size) - visible_rectangle.top  * desired_scale;
-        	return makePoint(left, top);
-        }
+            var left = (origin.x * scaled_tile_size) - visible_rectangle.left * desired_scale;
+            var top = (origin.y * scaled_tile_size) - visible_rectangle.top  * desired_scale;
+            return makePoint(left, top);
+        };
+        
+        var drawTile = function (col, row, origin, size, offset) {
+            var tile = tiles[row][col];
+            if (tile === null) {
+                tile = makeTile(image_url, layer_number, col, row, pyramid);
+                tiles[row][col] = tile;
+                tile.generate(element);
+            }
+            
+            var x = Math.round((col - origin.x) * size + offset.x);
+            var y = Math.round((row - origin.y) * size + offset.y);
+            tile.draw(x, y, size);
+            shown.push(tile);
+        };
                 
         layer.draw = function () {           
             var view_rectangle = viewport.getView().bounds();
@@ -133,27 +152,14 @@ webact.in_package("tiled_image", function (package) {
             pyramid.forTiles(view_rectangle, layer_number, function (col, row) {
                 drawTile(col, row, origin, scaled_tile_size, offset);
             });
-        } 
-
-        var drawTile = function (col, row, origin, size, offset) {
-            var tile = tiles[row][col];
-            if (tile == null) {
-                tile = makeTile(image_url, layer_number, col, row, pyramid);
-                tiles[row][col] = tile;
-                tile.generate(element);
-            }
-            
-            var x = Math.round((col - origin.x) * size + offset.x);
-            var y = Math.round((row - origin.y) * size + offset.y);
-            tile.draw(x, y, size);
-            shown.push(tile);
-        }
-                
+        };
+       
         layer.hide = function () {
-            for (var index = 0; index < shown.length; index += 1)
+            for (var index = 0; index < shown.length; index += 1) {
                 shown[index].hide();
+            }
             shown = [];
-        }
+        };
         
         layer.generate = function (container) {
             element = jQuery("<div/>", {
@@ -162,15 +168,15 @@ webact.in_package("tiled_image", function (package) {
             });
             container.append(element);
             return element;
-        }
+        };
         
         initialize();
         return layer;
-    }
-    package.makeLayer = makeLayer;
+    };
+    tiled_image.makeLayer = makeLayer;
     
     var makeTiledImage = function (image_url, pyramid, viewport) {
-        var tiled_image = {pyramid: null};
+        var self = {pyramid: null};
         
         var element = null;
         var layers = [];
@@ -180,25 +186,10 @@ webact.in_package("tiled_image", function (package) {
         var pan_start = null;
         
         var initialize = function () {
-            viewport.addListener("changed", tiled_image);
-            viewport.addListener("zoomed", tiled_image, "changed");
-        }
+            viewport.addListener("changed", self);
+            viewport.addListener("zoomed", self, "changed");
+        };
         
-        var generate = function (container) {
-            element = jQuery("<div/>", {
-                style: "position:relative;width:700px;height:660px;overflow:hidden;"
-            });
-            container.append(element);
-            tiled_image.width   = pyramid.width;
-            tiled_image.height  = pyramid.height;
-            createLayers();
-            this.element = element;
-            var offset = element.offset();
-            draw();
-            return element;
-        }
-        tiled_image.generate = generate;
-
         var createLayers = function () {
             layers = [];
             var layer_count = pyramid.layers();
@@ -208,33 +199,50 @@ webact.in_package("tiled_image", function (package) {
                 layer.generate(element);
                 layers.push(layer);
             }
-        }
-        
-        tiled_image.changed = function () {
-            draw();
-        }
+        };
         
         var draw = function () {
             var layer_number = pyramid.layerForScale(viewport.getScale());
             var layer_count = pyramid.layers();
             for (var index = 0; index < layer_count; index += 1) {
                 var layer = layers[index];
-                if (index <= layer_number)
+                if (index <= layer_number) {
                     layer.draw();
-                else
+                }
+                else {
                     layer.hide();
+                }
             }
-        }
+        };
+        
+        var generate = function (container) {
+            element = jQuery("<div/>", {
+                style: "position:relative;width:700px;height:660px;overflow:hidden;"
+            });
+            container.append(element);
+            self.width   = pyramid.width;
+            self.height  = pyramid.height;
+            createLayers();
+            this.element = element;
+            var offset = element.offset();
+            draw();
+            return element;
+        };
+        self.generate = generate;
+  
+        self.changed = function () {
+            draw();
+        };
 
-        tiled_image.toString = function () {
-            return "TiledImage(width=" + tiled_image.width 
-                    + ", height=" + tiled_image.height + ")";
-        }
+        self.toString = function () {
+            return "TiledImage(width=" + self.width +
+                ", height=" + self.height + ")";
+        };
         
         initialize();
-        return tiled_image;
-    }
-    package.makeTiledImage = makeTiledImage;
+        return self;
+    };
+    tiled_image.makeTiledImage = makeTiledImage;
 
 
 });

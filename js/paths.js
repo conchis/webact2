@@ -1,4 +1,7 @@
-/**
+/*jslint newcap: false, onevar: false */
+/*global webact: true, jQuery: false */
+
+/*
  * Copyright 2011 Jonathan A. Smith.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,15 +37,16 @@ webact.in_package("paths", function (paths) {
 
         // Add any initial slashes
         for (var index = 0;
-                index < tokens.length && tokens[index] == ""; index += 1)
+                index < tokens.length && tokens[index] === ""; index += 1) {
             result.push(tokens[index]);
+        }
 
         // Remove any additional slashes
-        for (; index < tokens.length; index += 1)
-        {
+        for (; index < tokens.length; index += 1) {
             var token = tokens[index];
-            if (token != "")
+            if (token !== "") {
                 result.push(token);
+            }
         }
 
         return result;
@@ -54,10 +58,13 @@ webact.in_package("paths", function (paths) {
         var segments = [];
         for (var index = 0; index < arguments.length; index += 1) {
             var argument = arguments[index];
-            if (argument == '/') argument = '';
+            if (argument === '/') {
+                argument = '';
+            }
             var tokens = paths.split(argument);
-            for (var token_index = 0; token_index < tokens.length; token_index += 1)
+            for (var token_index = 0; token_index < tokens.length; token_index += 1) {
                 segments.push(tokens[token_index]);
+            }
         }
         return paths.normalize(segments.join("/"));
     };
@@ -72,14 +79,17 @@ webact.in_package("paths", function (paths) {
 	
 	paths.parent = function (path) {
 		var segments = paths.split(path);
-		if (  (segments.length == 1 && segments[0] == "") || 
-			  (segments.length == 2 && segments[0] == "" && segments[1] == ""))
-			throw makeInvalidPathError("parent(\"" + path + "\")");		
+		if ((segments.length === 1 && segments[0] === "") || 
+			(segments.length === 2 && segments[0] === "" && segments[1] === "")) {
+			throw makeInvalidPathError("parent(\"" + path + "\")");	
+		}	
 		segments = segments.slice(0, segments.length - 1);
-		if (segments.length == 1 && segments[0] == "")
+		if (segments.length === 1 && segments[0] === "") {
 			return "/";
-		else
+		}
+		else {
 			return segments.join("/");	
+		}
 	};
     
 });

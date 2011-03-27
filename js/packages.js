@@ -1,4 +1,7 @@
-/**
+/*jslint newcap: false, onevar: false */
+/*global webact: true, jQuery: false */
+
+/*
  * Copyright 2011 Jonathan A. Smith.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,13 +35,15 @@ webact = this.webact || {};
     // optional.
 
     var create = function (proto, initial) {
-        var constructor = function () {}; 
+        var constructor, result, name;
+        constructor = function () {}; 
         constructor.prototype = proto; 
-        var result = new constructor();
+        result = new constructor();
         if (initial !== undefined) {
-            for (var name in initial) {
-                if (initial.hasOwnProperty(name))
+            for (name in initial) {
+                if (initial.hasOwnProperty(name)) {
                     result[name] = initial[name];
+                }
             }
         }
         return result;
@@ -53,10 +58,12 @@ webact = this.webact || {};
         // Returns all the names exported by this package
         
         names: function () {
-            var all_names = [];
-            for (var name in this) {
-                if (this.hasOwnProperty(name) && name != "name")
+            var all_names, name;
+            all_names = [];
+            for (name in this) {
+                if (this.hasOwnProperty(name) && name !== "name") {
                     all_names.push(name);
+                }
             }
             return all_names;
         },
@@ -65,12 +72,14 @@ webact = this.webact || {};
         // the exported names from this package into a local scope.
         
         exports: function () {
-            if (this.name === null)
+            var names, result, index, name;
+            if (this.name === null) {
                 throw new Error("Package name not set");
-            var names = this.names();
-            var result = []; 
-            for (var index = 0; index < names.length; index += 1) {
-                var name = names[index];
+            }
+            names = this.names();
+            result = []; 
+            for (index = 0; index < names.length; index += 1) {
+                name = names[index];
                 result.push("var " + name + "=webact." + this.name + "." + name);
             }
             
@@ -91,8 +100,9 @@ webact = this.webact || {};
 		}
 		
 		// Execute the package body if any
-		if (body !== undefined)
+		if (body !== undefined) {
 		    body(package_object);
+		}
 		    
 		// Return the package object
 		return package_object;
@@ -103,15 +113,17 @@ webact = this.webact || {};
 	// local scope. Arguments are package names.
 	
 	webact.imports = function () {
-	    var result = [];
-	    for (var index = 0; index < arguments.length; index += 1) {
-	        var name = arguments[index];
-	        var pack = webact[name];
-	        if (pack === undefined)
+	    var result, index, name, pack;
+	    result = [];
+	    for (index = 0; index < arguments.length; index += 1) {
+	        name = arguments[index];
+	        pack = webact[name];
+	        if (pack === undefined) {
 	            throw new Error("Undefined package: " + name);
+	        }
 	        result.push(pack.exports());
 	    }
 	    return result.join(";");
 	};
 	
-})(webact, jQuery);
+}(webact, jQuery));

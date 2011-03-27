@@ -1,4 +1,9 @@
-/**
+/*jslint newcap: false, onevar: false, evil: true */
+/*global webact: true, jQuery: false, makeControl: false, 
+    makePoint: false, makeRectangle: false, makeDimensions: false, loadPyramid: false,
+    makeViewport: false, makeTiledImage: false */
+
+/*
  * Copyright 2011 Jonathan A. Smith.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +19,7 @@
  * limitations under the License.
  */
 
-webact.in_package("viewer", function (package) {
+webact.in_package("viewer", function (viewer) {
 
     eval(webact.imports("geometry"));
     eval(webact.imports("pyramid"));
@@ -22,12 +27,14 @@ webact.in_package("viewer", function (package) {
     eval(webact.imports("tiled_image"));
     eval(webact.imports("controls"));
     
+    var makeSelector, makeNavigator, makeZoomSlider, makeViewerButtons; 
+    
     // Constants for viewer mode
     var SELECT_MODE = 0;
     var PAN_MODE    = 1;
     
-    package.makeViewer = function (options) {
-		var viewer = makeControl(options);
+    viewer.makeViewer = function (options) {
+		var self = makeControl(options);
 		
 		var mode = SELECT_MODE;
 		
@@ -42,105 +49,97 @@ webact.in_package("viewer", function (package) {
 		var selector = null;
 		
 		
-		viewer.getViewport = function () {
+		self.getViewport = function () {
 		    return viewport;
-		}
+		};
 		
-		viewer.getImageURL = function () {
+		self.getImageURL = function () {
 		    return image_url;
-		}
+		};
 		
-        viewer.generate = function (container) {
+        self.generate = function (container) {
             var dom_element = jQuery("<div/>", {
-            	"class": "wa_image_viewer"
+                "class": "wa_image_viewer"
             });
             dom_element.css("width", width);
             dom_element.css("height", height);
             container.append(dom_element);
-            if (options.css)
-            	dom_element.addClass(options.css);
+            if (options.css) {
+                dom_element.addClass(options.css);
+            }
             dom_element.data("_control", this);
-            viewer.load(image_url, dom_element);
+            self.load(image_url, dom_element);
             return dom_element;
-        }
+        };
         
-        var generateControls = function (dom_element) {   
-            //controls = makeControls(viewer);
-            //controls.create(dom_element.parent());
-        }
+        var onPan = function (event) {
+            var mouse_point = makePoint(event.pageX, event.pageY);
+            viewport.pan(mouse_point);
+        };
+        
+        var onPanEnd = function (event) {
+            var element = self.dom_element;
+            viewport.endPan();
+            
+            element.unbind("mousemove", onPan);
+            jQuery("body").unbind("mouseup", onPanEnd);          
+        };
+        
+        var onMouseDown = function (event) {
+            var element = self.dom_element;
+            var mouse_point = makePoint(event.pageX, event.pageY);
+            
+            if (mode === PAN_MODE) {
+                viewport.startPan(mouse_point);  
+                element.bind("mousemove", onPan);
+                jQuery("body").bind("mouseup", onPanEnd);
+            }
+            else if (mode === SELECT_MODE) {
+                selector.select(mouse_point, event);
+            }
+        };
 
-        viewer.load = function (image_url, dom_element) {
+        self.load = function (image_url, dom_element) {
             loadPyramid(image_url, function (pyramid) {
                 viewport = makeViewport(pyramid.dimensions(), 
                     makeDimensions(width, height)); 
                 image = makeTiledImage(image_url, pyramid, viewport);       
                 image.generate(dom_element, dom_element);                
-                selector = makeSelector(viewer, viewport);
-                selector.create(dom_element);              
-                generateControls(dom_element);
-                attachEvents(dom_element);  
-                viewer.broadcast("loaded");             
+                selector = makeSelector(self, viewport);
+                selector.create(dom_element);
+                dom_element.mousedown(onMouseDown);                
+                self.broadcast("loaded");             
             });
-        }
+        };
         
-        var attachEvents = function (element) {    
-            element.mousedown(onMouseDown);   
-        }
-        
-        var onMouseDown = function (event) {
-            var element = viewer.dom_element;
-            var mouse_point = makePoint(event.pageX, event.pageY);
-            
-            if (mode == PAN_MODE) {
-                viewport.startPan(mouse_point);  
-                element.bind("mousemove", onPan);
-                jQuery(document).bind("mouseup", onPanEnd);
-            }
-            else if (mode == SELECT_MODE)
-                selector.select(mouse_point, event);
-        }
-        
-        var onPan = function (event) {
-            var mouse_point = makePoint(event.pageX, event.pageY);
-            viewport.pan(mouse_point);
-        }
-        
-        var onPanEnd = function (event) {
-            var element = viewer.dom_element;
-            viewport.endPan();
-            
-            element.unbind("mousemove", onPan);
-            jQuery(document).unbind("mouseup", onPanEnd);          
-        }
-        
-        viewer.canZoomIn = function () {
+        self.canZoomIn = function () {
             return viewport.canZoomIn();
-        }
+        };
         
-        viewer.zoomIn = function () {
+        self.zoomIn = function () {
             return viewport.zoomIn();
-        }
+        };
         
-        viewer.canZoomOut = function () {
+        self.canZoomOut = function () {
             return viewport.canZoomOut();
-        }
+        };
         
-        viewer.zoomOut = function () {
+        self.zoomOut = function () {
             viewport.zoomOut();
-        }
+        };
         
-        viewer.zoomReset = function () {
+        self.zoomReset = function () {
             viewport.zoomReset();
-        }
+        };
         
-        viewer.setScale = function (scale) {
+        self.setScale = function (scale) {
             viewport.setScale(scale);
-        }
+        };
 		
-		return viewer;
+		return self;
     };
     
-    var makeSelector = function (viewer, viewport) {
+    makeSelector = function (viewer, viewport) {
         var self = makeControl({});
         
         var offset = null;
@@ -153,10 +152,32 @@ webact.in_package("viewer", function (package) {
             container.append(dom_element);
             dom_element.hide();
             return dom_element;
-        }
+        };
+        
+        var onMouseMove = function (event) {
+            self.dom_element.css({
+                left:   Math.min(start.x, event.pageX) - offset.left,
+                top:    Math.min(start.y, event.pageY) - offset.top,
+                width:  Math.abs(event.pageX - start.x),
+                height: Math.abs(event.pageY - start.y)
+            });     
+        };
+        
+        var onMouseUp = function (event) {
+            viewer.dom_element.unbind("mousemove", onMouseMove);
+            jQuery("body").unbind("mouseup", onMouseUp);  
+            self.hide();
+            
+            var zoom_box = makeRectangle(
+                Math.min(start.x, event.pageX) - offset.left,
+                Math.min(start.y, event.pageY) - offset.top,
+                Math.max(start.x, event.pageX) - offset.left,
+                Math.max(start.y, event.pageY) - offset.top             
+            );
+            viewport.zoomBox(zoom_box);
+        };
         
         self.select = function (start_point) {
-            console.log("select");
             start = start_point;
             offset = viewer.dom_element.offset();
             var element = self.dom_element;
@@ -167,36 +188,13 @@ webact.in_package("viewer", function (package) {
             self.show();
             
             viewer.dom_element.bind("mousemove", onMouseMove);
-            jQuery(document).bind("mouseup", onMouseUp);           
-        }
-
-        var onMouseMove = function (event) {
-            self.dom_element.css({
-                left:   Math.min(start.x, event.pageX) - offset.left,
-                top:    Math.min(start.y, event.pageY) - offset.top,
-                width:  Math.abs(event.pageX - start.x),
-                height: Math.abs(event.pageY - start.y)
-            });     
-        }
-        
-        var onMouseUp = function (event) {
-            viewer.dom_element.unbind("mousemove", onMouseMove);
-            jQuery(document).unbind("mouseup", onMouseUp);  
-            self.hide();
-            
-            var zoom_box = makeRectangle(
-                Math.min(start.x, event.pageX) - offset.left,
-                Math.min(start.y, event.pageY) - offset.top,
-                Math.max(start.x, event.pageX) - offset.left,
-                Math.max(start.y, event.pageY) - offset.top             
-            );
-            viewport.zoomBox(zoom_box);
-        }
+            jQuery("body").bind("mouseup", onMouseUp);           
+        };
         
         return self;
-    }
+    };
     
-    package.makeViewerControls = function (viewer) {
+    viewer.makeViewerControls = function (viewer) {
         var self = makeControl({});
         
         var viewport = null;
@@ -208,7 +206,26 @@ webact.in_package("viewer", function (package) {
         
         var initialize = function () {
             viewer.addListener("loaded", self);
-        }
+        }; 
+
+        var onMouseOver = function (event) {
+            icon.hide();
+            panel.show("fade", 200);
+        };
+        
+        var onMouseOut = function (event) {
+            var offset = self.dom_element.offset();
+            
+            var pageX = event.pageX;
+            var pageY = event.pageY;
+            if (pageX >= offset.left && pageX <= (offset.left + size.width) &&
+                pageY >= offset.top  && pageY <= (offset.top + size.height)) {
+                return;
+            }
+            
+            panel.hide("fade", 200);
+            icon.show();
+        };
         
         self.generate = function (container) {
             var dom_element = jQuery("<div/>", {
@@ -216,20 +233,7 @@ webact.in_package("viewer", function (package) {
             });  
             container.append(dom_element);  
             return dom_element;
-        }
-        
-        self.loaded = function () {
-            var dom_element = self.dom_element;
-            viewport = viewer.getViewport();
-            image_url = viewer.getImageURL();
-            
-            var scene_size = viewport.getSceneSize();
-            size = makeDimensions(200, scene_size.height * (150 / scene_size.width) + 20);
-            dom_element.css({width: size.width, height: size.height});
-            
-            generatePanel(dom_element);
-            generateIcon(dom_element);
-        }
+        };
         
         var generatePanel = function (dom_element) {
             panel = jQuery("<div/>", {
@@ -249,7 +253,7 @@ webact.in_package("viewer", function (package) {
             buttons.create(panel);
             
             panel.bind("mouseout", onMouseOut);
-        }
+        };
         
         var generateIcon = function (dom_element) {
             var scene_size = viewport.getSceneSize();
@@ -276,31 +280,26 @@ webact.in_package("viewer", function (package) {
             icon.append(image);
             
             icon.bind("mouseover", onMouseOver);
-        }
-        
-        var onMouseOver = function (event) {
-            icon.hide();
-            panel.show("fade", 200);
-        }
-        
-        var onMouseOut = function (event) {
-            var offset = self.dom_element.offset();
+        };
+
+        self.loaded = function () {
+            var dom_element = self.dom_element;
+            viewport = viewer.getViewport();
+            image_url = viewer.getImageURL();
             
-            var pageX = event.pageX;
-            var pageY = event.pageY;
-            if (pageX >= offset.left && pageX <= (offset.left + size.width)
-             && pageY >= offset.top  && pageY <= (offset.top + size.height))
-                return;
+            var scene_size = viewport.getSceneSize();
+            size = makeDimensions(200, scene_size.height * (150 / scene_size.width) + 20);
+            dom_element.css({width: size.width, height: size.height});
             
-            panel.hide("fade", 200);
-            icon.show();
-        }
+            generatePanel(dom_element);
+            generateIcon(dom_element);
+        };
           
         initialize();
         return self;
-    }
+    };
     
-    var makeNavigator = function (viewport, image_url) {
+    makeNavigator = function (viewport, image_url) {
         var navigator = makeControl({});
         
         var top = 0;
@@ -322,7 +321,39 @@ webact.in_package("viewer", function (package) {
             viewport.addListener("changed", navigator);
             viewport.addListener("zoomed", navigator, "changed");
             
-        }
+        };
+        
+        var track = function (event) {
+            if (!is_tracking) {
+                return;
+            }
+            event.stopPropagation();
+            var center = makePoint(
+                Math.round((event.pageX - left) / scale), 
+                Math.round((event.pageY - top) / scale));
+            viewport.centerOn(center);
+        };
+        
+        var startTracking = function (event) {
+            event.preventDefault(true);
+            event.stopPropagation();
+            var offset = navigator.dom_element.offset();
+            left = offset.left;
+            top = offset.top;
+            is_tracking = true;
+            track(event);
+        };
+        
+        var stopTracking = function (event) {
+            event.stopPropagation();
+            is_tracking = false;
+        };
+
+        var attachEvents = function (dom_element) {
+            dom_element.mousedown(startTracking);    
+            dom_element.mousemove(track); 
+            dom_element.mouseup(stopTracking);
+        };
         
         navigator.generate = function (container) {
             var dom_element = jQuery("<div/>", {
@@ -348,59 +379,33 @@ webact.in_package("viewer", function (package) {
             
             attachEvents(dom_element);          
             return dom_element;
-        }
-        
-        var startTracking = function (event) {
-            event.preventDefault(true);
-            event.stopPropagation();
-            var offset = navigator.dom_element.offset();
-            left = offset.left;
-            top = offset.top;
-            is_tracking = true;
-            track(event);
-        }
-        
-        var track = function (event) {
-            if (!is_tracking) return;
-            event.stopPropagation();
-            var center = makePoint(
-                Math.round((event.pageX - left) / scale), 
-                Math.round((event.pageY - top ) / scale));
-            viewport.centerOn(center);
-        }
-        
-        var stopTracking = function (event) {
-            event.stopPropagation();
-            is_tracking = false;
-        }
-        
-        var attachEvents = function (dom_element) {
-            dom_element.mousedown(startTracking);    
-            dom_element.mousemove(track); 
-            dom_element.mouseup(stopTracking);
-        }
-        
+        };
+                
         navigator.changed = function () {
             var rectangle = viewport.getView().bounds().scale(scale);
             var dimensions = rectangle.dimensions();           
-            indicator.css("left",   Math.round(rectangle.left       ));
-            indicator.css("top",    Math.round(rectangle.top        ));
-            indicator.css("width",  Math.round(dimensions.width - 2 ));
+            indicator.css("left", Math.round(rectangle.left));
+            indicator.css("top", Math.round(rectangle.top));
+            indicator.css("width", Math.round(dimensions.width - 2));
             indicator.css("height", Math.round(dimensions.height - 2));
-        }
+        };
         
         initialize();
         return navigator;
-    }
-    package.makeNavigator = makeNavigator;
+    };
+    viewer.makeNavigator = makeNavigator;
     
-    var makeZoomSlider = function (viewport) {
+    makeZoomSlider = function (viewport) {
         var slider = makeControl({});
         
         var initialize = function () {
             viewport.addListener("zoomed", slider);
-        }
+        };
         
+        var adjustZoom = function (event, ui) {
+            viewport.setScale(ui.value / 100.0);
+        };
+                
         slider.generate = function (container) {
             var dom_element = jQuery("<div/>", {
                 "class": "wa_image_slider"
@@ -413,24 +418,20 @@ webact.in_package("viewer", function (package) {
             });
             
             return dom_element;
-        }
-        
-        var adjustZoom = function (event, ui) {
-            viewport.setScale(ui.value / 100.0);
-        }
+        };
         
         slider.zoomed = function () {
             var dom_element = slider.dom_element;
             dom_element.slider("option", "value", 
                 Math.round(100 * viewport.getScale()));
-        }
+        };
         
         initialize();
         return slider;
-    }
+    };
     
     
-    var makeViewerButtons = function (viewport) {
+    makeViewerButtons = function (viewport) {
         var buttons = makeControl({});
         
         var in_button = null;
@@ -439,22 +440,22 @@ webact.in_package("viewer", function (package) {
         
         var initialize = function () {
             viewport.addListener("zoomed", buttons);
-        }
+        };
         
         var zoomIn = function (event) {
             event.stopPropagation();
             viewport.zoomIn();
-        }
+        };
         
         var zoomOut = function (event) {
             event.stopPropagation();
             viewport.zoomOut();
-        }
+        };
         
         var zoomReset = function (event) {
             event.stopPropagation();
             viewport.zoomReset();
-        }
+        };
         
         buttons.generate = function (container) {
             var dom_element = jQuery("<div/>", {
@@ -493,15 +494,15 @@ webact.in_package("viewer", function (package) {
             
             buttons.zoomed();                    
             return dom_element;
-        }
+        };
         
         buttons.zoomed = function () {
-            in_button.button( viewport.canZoomIn()  ? "enable" : "disable");
+            in_button.button(viewport.canZoomIn() ? "enable" : "disable");
             out_button.button(viewport.canZoomOut() ? "enable" : "disable");
-        }
+        };
         
         initialize();
         return buttons;
-    }
+    };
 
 });

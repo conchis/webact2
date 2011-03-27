@@ -1,4 +1,9 @@
-/**
+/*jslint newcap: false, onevar: false, evil: true */
+/*global webact: true, jQuery: false, makeBroadcaster: false, makePoint: false,
+    makeRectangle: false, makeScale: false, makeTranslate: false, makeRotate: false,
+    setTimeout: false */
+
+/*
  * Copyright 2011 Jonathan A. Smith.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,13 +19,15 @@
  * limitations under the License.
  */
 
-webact.in_package("viewport", function (package) {
+webact.in_package("viewport", function (viewport) {
 
     eval(webact.imports("observers"));
     eval(webact.imports("geometry"));
     
-    package.makeViewport = function (scene_size, view_size) {
-        var viewport = makeBroadcaster();
+    var makeZoomAnimator;
+    
+    viewport.makeViewport = function (scene_size, view_size) {
+        var self = makeBroadcaster();
         
         // Zoom steps (not locked, just used for snapping)
         var ZOOM_STEP = Math.SQRT2;
@@ -62,182 +69,193 @@ webact.in_package("viewport", function (package) {
         var pan_start = null;
         
         // Animator animates zoom and center changes over time
-        var animator = makeZoomAnimator(viewport);
-        
-        var initialize = function () {
-            initializeCoordinates();
-            update();
-        }
+        var animator = makeZoomAnimator(self);
         
         var initializeCoordinates = function () {
             var horizontal_scale = view_size.width / scene_size.width;
             var vertical_scale = view_size.height / scene_size.height; 
             minimum_scale = Math.min(horizontal_scale, vertical_scale);
-            visible_size = view_size.scale(1/ minimum_scale);
+            visible_size = view_size.scale(1 / minimum_scale);
             scale = minimum_scale;
             center = makePoint(visible_size.width / 2, visible_size.height / 2);
-        }
+        };
         
         var update = function () {
             var view_extent = view_size.scale(1 / scale);
             var half_extent = view_extent.scale(1 / 2);
-            	
+            
             limits = scene_size.rectangle().inset(half_extent.width, half_extent.height);
             center = center.pinInRectangle(limits);
             
-            view_transform = makeTranslate(view_size.width/2, view_size.height/2)
-            	.compose(makeScale(scale, scale))
-            	.compose(makeRotate(rotation))
-            	.compose(makeTranslate(-center.x, -center.y));         	
+            view_transform = makeTranslate(view_size.width /  2, view_size.height / 2)
+                .compose(makeScale(scale, scale))
+                .compose(makeRotate(rotation))
+                .compose(makeTranslate(-center.x, -center.y));
             scene_transform = view_transform.inverse();
             
             view_polygon = view_size.polygon().project(scene_transform);	
             clipped_view_polygon = view_polygon.clip(scene_size.rectangle());
-        }
+        };
+        
+        var initialize = function () {
+            initializeCoordinates();
+            update();
+        };
     
-        viewport.updateView = function (new_scale, new_center) {
+        self.updateView = function (new_scale, new_center) {
             scale = new_scale;
             center = new_center;
             update();
-        }
+        };
         
         // ** Accessors
         
-        viewport.getViewSize = function () {
+        self.getViewSize = function () {
             return view_size;
-        }
+        };
         
-        viewport.getSceneSize = function () {
+        self.getSceneSize = function () {
             return scene_size;
-        }
+        };
         
-        viewport.getScale = function () {
+        self.getScale = function () {
             return scale;
-        }
+        };
         
-        viewport.getRotation = function () { 
+        self.getRotation = function () { 
             return rotation;
-        }
+        };
         
-        viewport.getCenter = function () { 
+        self.getCenter = function () { 
             return center; 
-        }
+        };
         
-        viewport.getView = function () {
+        self.getView = function () {
             return view_polygon;
-        }
+        };
         
-        viewport.getClippedView = function () {
+        self.getClippedView = function () {
             return clipped_view_polygon;
-        }
+        };
         
-        viewport.getViewTransform = function () {
+        self.getViewTransform = function () {
             return view_transform;
-        }
+        };
         
-        viewport.getSceneTransform = function () {
+        self.getSceneTransform = function () {
             return scene_transform;
-        }
+        };
         
         // ** Set Rotation and Scale
         
-        viewport.setScale = function (new_scale) {
+        self.setScale = function (new_scale) {
             new_scale = Math.min(1.0, Math.max(new_scale, minimum_scale));
-            if (scale != new_scale) {
+            if (scale !== new_scale) {
                 scale = new_scale;
                 update();
                 this.broadcast("zoomed");
             }
-        }
+        };
    
-        viewport.setRotation = function (new_rotation) {
-            if (new_rotation < 0)
+        self.setRotation = function (new_rotation) {
+            if (new_rotation < 0) {
                 new_rotation += 2 * Math.PI;
-            if (rotation != new_rotation) {
+            }
+            if (rotation !== new_rotation) {
                 rotation = new_rotation;
                 update();
                 this.broadcast("changed");
             }
-        }
+        };
         
         // ** View
         
-        viewport.centerOn = function (scene_center) {
-            if (center.equals(scene_center)) return;
+        self.centerOn = function (scene_center) {
+            if (center.equals(scene_center)) {
+                return;
+            }
             center = scene_center.pinInRectangle(limits);
             update();
-            viewport.broadcast("changed");    
-        }
+            self.broadcast("changed");    
+        };
         
         // ** Zoom
         
-        var snapToLayer = function(scale) {
-         	var level = Math.ceil(Math.log(scale) / Math.log(ZOOM_STEP));
-         	var raw_scale = Math.pow(ZOOM_STEP, level);
-         	return Math.max(minimum_scale, Math.min(raw_scale, 1.0));
-        }
+        var snapToLayer = function (scale) {
+            var level = Math.ceil(Math.log(scale) / Math.log(ZOOM_STEP));
+            var raw_scale = Math.pow(ZOOM_STEP, level);
+            return Math.max(minimum_scale, Math.min(raw_scale, 1.0));
+        };
         
         var boxScale = function (box) {
             var dimensions = box.dimensions();  
-        	var horizontal_scale = view_size.width * scale / dimensions.width;
-        	var vertical_scale = view_size.height * scale / dimensions.height; 
-        	return snapToLayer(Math.min(horizontal_scale, vertical_scale));
-        }
+            var horizontal_scale = view_size.width * scale / dimensions.width;
+            var vertical_scale = view_size.height * scale / dimensions.height; 
+            return snapToLayer(Math.min(horizontal_scale, vertical_scale));
+        };
         
-        viewport.canZoomIn = function () {
+        self.canZoomIn = function () {
             return scale < 1.0;
-        }
+        };
         
         // center is optional
-        viewport.zoomIn = function (center) {
+        self.zoomIn = function (center) {
             var new_scale = snapToLayer(scale * ZOOM_STEP);
-            if (new_scale >= 1.0) return;
+            if (new_scale >= 1.0) {
+                return;
+            }
             animator.zoomTo(new_scale, center);
-            //viewport.setScale(new_scale);
-        }
+            //self.setScale(new_scale);
+        };
         
-        viewport.canZoomOut = function () {
+        self.canZoomOut = function () {
             return scale > minimum_scale;
-        }
+        };
         
         // center is optional
-        viewport.zoomOut = function (center) {
+        self.zoomOut = function (center) {
             var new_scale = snapToLayer(scale / ZOOM_STEP);
-            if (new_scale < minimum_scale) return;
+            if (new_scale < minimum_scale) {
+                return;
+            }
             animator.zoomTo(new_scale, center);
-            //viewport.setScale(new_scale);
-        }
+            //self.setScale(new_scale);
+        };
         
-        viewport.zoomReset = function () {
+        self.zoomReset = function () {
             animator.zoomTo(minimum_scale, center);
-        }
+        };
         
-        viewport.zoomBox = function (view_box) {
-        	var target_center = view_box.center().project(scene_transform);
-
-            var dimensions = view_box.dimensions();        	
-        	var target_scale = 0;
-        	if (dimensions.width > 2 && dimensions.height > 2)
-        		target_scale = boxScale(view_box);
-        	else
-        		target_scale = snapToLayer(scale * ZOOM_STEP);
-        	
-        	animator.zoomTo(target_scale, target_center);
-        }
+        self.zoomBox = function (view_box) {
+            var target_center = view_box.center().project(scene_transform);
+            
+            var dimensions = view_box.dimensions();
+            var target_scale = 0;
+            if (dimensions.width > 2 && dimensions.height > 2) {
+                target_scale = boxScale(view_box);
+            }
+            else {
+                target_scale = snapToLayer(scale * ZOOM_STEP);
+            }
+            
+            animator.zoomTo(target_scale, target_center);
+        };
         
         // ** Pan
         
-        viewport.startPan = function (new_pan_start) {
+        self.startPan = function (new_pan_start) {
             pan_start = new_pan_start;
             pan_center = center;   
-        }
+        };
         
-        viewport.isPanning = function () {
-            return pan_start != null;
-        }
+        self.isPanning = function () {
+            return pan_start !== null;
+        };
         
-        viewport.pan = function (view_point) {
-            if (pan_center == null) return;
+        self.pan = function (view_point) {
+            if (pan_center === null) {
+                return;
+            }
             
             var offset_x = (pan_start.x - view_point.x) / scale;
             var offset_y = (pan_start.y - view_point.y) / scale;
@@ -246,39 +264,38 @@ webact.in_package("viewport", function (package) {
             center = center.pinInRectangle(limits);
             
             update();
-            viewport.broadcast("changed");
-        }
+            self.broadcast("changed");
+        };
         
-        viewport.endPan = function () {
+        self.endPan = function () {
             pan_center = null;
             pan_start = null;
-        }
+        };
         
-        viewport.cancelPan = function () {
+        self.cancelPan = function () {
             center = pan_center;
             pan_center = null;
             update();
-            viewport.broadcast("changed");
-        }
+            self.broadcast("changed");
+        };
         
         // ** String Representation
         
-        viewport.toString = function () {
+        self.toString = function () {
             return (
-                "Viewport("
-                    + "scale="  + scale + ", "
-                    + "center=" + center + ", "
-                    + "scene_size="  + scene_size
-                + ")"
+                "Viewport(" +
+                    "scale=" + scale + ", " +
+                    "center=" + center + ", " +
+                    "scene_size="  + scene_size +
+                ")"
             );
-            return out.join("");
-        }
+        };
         
         initialize();
-        return viewport;
-    }  
+        return self;
+    };  
     
-    var makeZoomAnimator = function (viewport) {
+    makeZoomAnimator = function (viewport) {
         var self = {};
         
         var DELAY = 1; // Milliseconds
@@ -293,38 +310,10 @@ webact.in_package("viewport", function (package) {
         
         var step_count = 0;
         
-        self.zoomTo = function (new_scale, new_center) {
-            target_scale = new_scale || viewport.getScale();
-            target_center = new_center || viewport.getCenter();
-            start();
-        }
-        
-        var start = function () {
-            // Start only if animation is not underway
-            if (timer != null) return;
-            
-            // Compute number of steps
-            var scale = viewport.getScale();
-            var level = Math.ceil(Math.log(scale) / Math.log(Math.SQRT2));	
-            var goal_level = Math.ceil(Math.log(target_scale) / Math.log(Math.SQRT2));
-            steps = Math.abs(level - goal_level) + 2; 
-            step_count = 0;
-                     
-             // Initiate Timer
-            timer = setTimeout(step, DELAY);            
-        }
-        
-        var step = function () {
-            step_count += 1;
-            if (step_count < steps) {
-                update();
-                timer = setTimeout(step, DELAY);
-            }
-            else {
-                finish();
-                timer = null;
-            }  
-        }
+        var finish = function () {
+            viewport.updateView(target_scale, target_center);
+            viewport.broadcast("zoomed");
+        }; 
         
         var update = function () {
             var scale = viewport.getScale();
@@ -338,14 +327,45 @@ webact.in_package("viewport", function (package) {
             
             viewport.updateView(new_scale, new_center);
             viewport.broadcast("zoomed"); 
-        }
+        };
+
+        var step = function () {
+            step_count += 1;
+            if (step_count < steps) {
+                update();
+                timer = setTimeout(step, DELAY);
+            }
+            else {
+                finish();
+                timer = null;
+            }  
+        };
         
-        var finish = function () {
-            viewport.updateView(target_scale, target_center);
-            viewport.broadcast("zoomed");
-        }
+        var start = function () {
+            // Start only if animation is not underway
+            if (timer !== null) {
+                return;
+            }
+            
+            // Compute number of steps
+            var scale = viewport.getScale();
+            var level = Math.ceil(Math.log(scale) / Math.log(Math.SQRT2));	
+            var goal_level = Math.ceil(Math.log(target_scale) / Math.log(Math.SQRT2));
+            steps = Math.abs(level - goal_level) + 2; 
+            step_count = 0;
+                     
+             // Initiate Timer
+            timer = setTimeout(step, DELAY);            
+        };
+        
+        self.zoomTo = function (new_scale, new_center) {
+            target_scale = new_scale || viewport.getScale();
+            target_center = new_center || viewport.getCenter();
+            start();
+        };
+
         
         return self;
-    } 
+    };
 
 });
