@@ -16,10 +16,26 @@
     position: absolute;
     width: 200px;
     height: 205px;
-    left: 310px;
-    top: 380px;
+    left: 300px;
+    top: 370px;
+}
+
+.wa_image_panel {
+    position: absolute;
+    width: 200px;
+    height: 205px;
+    margin: 0;
     background-image: url(../images/semiwhite.png);
-    border: 1px solid #999;
+    border: 1px solid #CCC;
+}
+
+.wa_image_icon {
+    position: absolute;
+}
+
+.wa_image_icon img {
+    position: absolute;
+    border: 1px dotted #999;
 }
 
 .wa_image_navigator {
@@ -31,7 +47,6 @@
     left: 5px;
     top: 5px;
     overflow: hidden;
-    border: 1px dotted #818181;
 }
 
 .wa_image_thumbnail {

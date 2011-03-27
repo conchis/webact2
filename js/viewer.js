@@ -205,6 +205,10 @@ webact.in_package("viewer", function (package) {
         var viewport = null;
         var image_url = null;
         
+        var size = null;
+        var icon = null;
+        var panel = null;
+        
         var initialize = function () {
             viewer.addListener("loaded", self);
         }
@@ -213,23 +217,85 @@ webact.in_package("viewer", function (package) {
             var dom_element = jQuery("<div/>", {
                 "class": "wa_image_controls"
             });  
-            container.append(dom_element);
+            container.append(dom_element);  
             return dom_element;
         }
         
         self.loaded = function () {
+            var dom_element = self.dom_element;
             viewport = viewer.getViewport();
             image_url = viewer.getImageURL();
-            var dom_element = self.dom_element;
+            
+            var scene_size = viewport.getSceneSize();
+            size = makeDimensions(200, scene_size.height * (150 / scene_size.width) + 20);
+            dom_element.css({width: size.width, height: size.height});
+            
+            generatePanel(dom_element);
+            generateIcon(dom_element);
+        }
+        
+        var generatePanel = function (dom_element) {
+            panel = jQuery("<div/>", {
+                "class": "wa_image_panel"
+            });
+            dom_element.append(panel);
+            panel.css({width: size.width, height: size.height});
+            panel.hide();
             
             var navigator = makeNavigator(viewport, image_url);
-            navigator.create(dom_element);
+            navigator.create(panel);
             
             var slider = makeZoomSlider(viewport);
-            slider.create(dom_element);
+            slider.create(panel);
             
             var buttons = makeViewerButtons(viewport);
-            buttons.create(dom_element);
+            buttons.create(panel);
+            
+            panel.bind("mouseout", onMouseOut);
+        }
+        
+        var generateIcon = function (dom_element) {
+            var scene_size = viewport.getSceneSize();
+            var width = 64;
+            var height = scene_size.height * width / scene_size.width;
+            
+            icon = jQuery("<div/>", {
+                "class": "wa_image_icon"
+            });
+            dom_element.append(icon);
+            icon.css({left: size.width - width - 5, top: size.height - height - 5});
+            
+            var shadow = jQuery("<img/>", {
+                "src": "../../images/semishadow.png"
+            });
+            shadow.css({left: 5, top: 5, width: width, height: height});
+            icon.append(shadow);
+        
+            var image = jQuery("<img/>", {
+                "src": image_url + "/thumbnail.jpg"
+            });
+            image.css("width", width);
+            icon.append(image);
+            
+            icon.bind("mouseover", onMouseOver);
+        }
+        
+        var onMouseOver = function (event) {
+            icon.hide();
+            panel.show("fade", "fast");
+        }
+        
+        var onMouseOut = function (event) {
+            var offset = self.dom_element.offset();
+            
+            var pageX = event.pageX;
+            var pageY = event.pageY;
+            if (pageX >= offset.left && pageX <= (offset.left + size.width)
+             && pageY >= offset.top  && pageY <= (offset.top + size.height))
+                return;
+            
+            panel.hide("fade", "fast");
+            icon.show();
         }
           
         initialize();
@@ -298,7 +364,6 @@ webact.in_package("viewer", function (package) {
         
         var track = function (event) {
             if (!is_tracking) return;
-            event.preventDefault(true);
             event.stopPropagation();
             var center = makePoint(
                 Math.round((event.pageX - left) / scale), 
@@ -307,7 +372,6 @@ webact.in_package("viewer", function (package) {
         }
         
         var stopTracking = function (event) {
-            event.preventDefault(true);
             event.stopPropagation();
             is_tracking = false;
         }
