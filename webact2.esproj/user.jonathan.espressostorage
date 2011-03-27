@@ -53,6 +53,14 @@
 			<dict>
 				<key>StateType</key>
 				<string>PreviewTab</string>
+				<key>Title</key>
+				<string>Test Viewer</string>
+				<key>URL</key>
+				<string>file:///Users/jonathan/Sites/webact2/test/controls/viewer.html</string>
+			</dict>
+			<dict>
+				<key>StateType</key>
+				<string>PreviewTab</string>
 			</dict>
 		</array>
 	</dict>

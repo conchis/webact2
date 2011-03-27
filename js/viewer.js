@@ -403,7 +403,7 @@ webact.in_package("viewer", function (package) {
             in_button = jQuery("<a/>");
             dom_element.append(in_button);
             in_button.button({
-                icons: {primary: "ui-icon-zoomin"},
+                icons: {primary: "ui-icon-plus"},
                 text: false,
                 label: "Zoom In"
             });
@@ -412,7 +412,7 @@ webact.in_package("viewer", function (package) {
             out_button = jQuery("<a/>");
             dom_element.append(out_button);
             out_button.button({
-                icons: {primary: "ui-icon-zoomout"},
+                icons: {primary: "ui-icon-minus"},
                 text: false,
                 label: "Zoom Out",
                 click: zoomOut
