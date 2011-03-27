@@ -26,16 +26,20 @@
     height: 205px;
     margin: 0;
     background-image: url(../images/semiwhite.png);
-    border: 1px solid #CCC;
+    border: 1px solid #888;
 }
 
 .wa_image_icon {
     position: absolute;
 }
 
+.wa_image_small {
+    position: absolute;
+    border: 1px solid #888;
+}
+
 .wa_image_icon img {
     position: absolute;
-    border: 1px dotted #999;
 }
 
 .wa_image_navigator {

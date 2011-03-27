@@ -272,7 +272,8 @@ webact.in_package("viewer", function (package) {
             icon.append(shadow);
         
             var image = jQuery("<img/>", {
-                "src": image_url + "/thumbnail.jpg"
+                "src": image_url + "/thumbnail.jpg",
+                "class": "wa_image_small"
             });
             image.css("width", width);
             icon.append(image);
@@ -282,7 +283,7 @@ webact.in_package("viewer", function (package) {
         
         var onMouseOver = function (event) {
             icon.hide();
-            panel.show("fade", "fast");
+            panel.show("fade", 200);
         }
         
         var onMouseOut = function (event) {
@@ -294,7 +295,7 @@ webact.in_package("viewer", function (package) {
              && pageY >= offset.top  && pageY <= (offset.top + size.height))
                 return;
             
-            panel.hide("fade", "fast");
+            panel.hide("fade", 200);
             icon.show();
         }
           
