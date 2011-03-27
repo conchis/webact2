@@ -58,19 +58,9 @@ webact.in_package("viewer", function (package) {
             return dom_element;
         }
         
-        var generateControls = function (dom_element) {
-            selector = makeSelector(viewer, viewport);
-            selector.create(dom_element);
-
-            var navigator = makeNavigator(viewport, image_url);
-            navigator.create(dom_element);
-            
-            var slider = makeZoomSlider(viewport);
-            slider.create(dom_element);
-            
-            var buttons = makeViewerButtons(viewport);
-            buttons.create(dom_element);
-
+        var generateControls = function (dom_element) {   
+            controls = makeControls(viewer, viewport, image_url);
+            controls.create(dom_element.parent());
         }
 
         viewer.load = function (image_url, dom_element) {
@@ -79,8 +69,13 @@ webact.in_package("viewer", function (package) {
                     makeDimensions(width, height)); 
                 image = makeTiledImage(image_url, pyramid, viewport);       
                 image.generate(dom_element, dom_element);
-                attachEvents(dom_element);               
+                
+                selector = makeSelector(viewer, viewport);
+                selector.create(dom_element);
+                
                 generateControls(dom_element);
+
+                attachEvents(dom_element);               
             });
         }
         
@@ -140,6 +135,84 @@ webact.in_package("viewer", function (package) {
 		
 		return viewer;
     };
+    
+    var makeSelector = function (viewer, viewport) {
+        var self = makeControl({});
+        
+        var offset = null;
+        var start = null;
+        
+        self.generate = function (container) {
+            var dom_element = jQuery("<div/>", {
+                "class": "wa_image_selector"
+            });
+            container.append(dom_element);
+            dom_element.hide();
+            return dom_element;
+        }
+        
+        self.select = function (start_point) {
+            console.log("select");
+            start = start_point;
+            offset = viewer.dom_element.offset();
+            var element = self.dom_element;
+            element.css("left", start_point.x - offset.left);
+            element.css("top", start_point.y - offset.top);
+            element.css("width", 0);
+            element.css("height", 0); 
+            self.show();
+            
+            viewer.dom_element.bind("mousemove", onMouseMove);
+            jQuery(document).bind("mouseup", onMouseUp);           
+        }
+
+        var onMouseMove = function (event) {
+            self.dom_element.css({
+                left:   Math.min(start.x, event.pageX) - offset.left,
+                top:    Math.min(start.y, event.pageY) - offset.top,
+                width:  Math.abs(event.pageX - start.x),
+                height: Math.abs(event.pageY - start.y)
+            });     
+        }
+        
+        var onMouseUp = function (event) {
+            viewer.dom_element.unbind("mousemove", onMouseMove);
+            jQuery(document).unbind("mouseup", onMouseUp);  
+            self.hide();
+            
+            var zoom_box = makeRectangle(
+                Math.min(start.x, event.pageX) - offset.left,
+                Math.min(start.y, event.pageY) - offset.top,
+                Math.max(start.x, event.pageX) - offset.left,
+                Math.max(start.y, event.pageY) - offset.top             
+            );
+            viewport.zoomBox(zoom_box);
+        }
+        
+        return self;
+    }
+    
+    var makeControls = function (viewer, viewport, image_url) {
+        var self = makeControl({});
+        
+        self.generate = function (container) {
+            var dom_element = jQuery("<div/>", {
+                "class": "wa_image_controls"
+            });  
+            container.append(dom_element);
+            
+            var navigator = makeNavigator(viewport, image_url);
+            navigator.create(dom_element);
+            
+            var slider = makeZoomSlider(viewport);
+            slider.create(dom_element);
+            
+            var buttons = makeViewerButtons(viewport);
+            buttons.create(dom_element);
+        }
+          
+        return self;
+    }
     
     var makeNavigator = function (viewport, image_url) {
         var navigator = makeControl({});
@@ -284,15 +357,18 @@ webact.in_package("viewer", function (package) {
             viewport.addListener("zoomed", buttons);
         }
         
-        var zoomIn = function () {
+        var zoomIn = function (event) {
+            event.stopPropagation();
             viewport.zoomIn();
         }
         
-        var zoomOut = function () {
+        var zoomOut = function (event) {
+            event.stopPropagation();
             viewport.zoomOut();
         }
         
-        var zoomReset = function () {
+        var zoomReset = function (event) {
+            event.stopPropagation();
             viewport.zoomReset();
         }
         
@@ -342,57 +418,6 @@ webact.in_package("viewer", function (package) {
         
         initialize();
         return buttons;
-    }
-    
-    var makeSelector = function (viewer, viewport) {
-        var self = makeControl({});
-        
-        var offset = null;
-        var start = null;
-        
-        self.generate = function (container) {
-            var dom_element = jQuery("<div/>", {
-                "class": "wa_image_selector"
-            });
-            container.append(dom_element);
-            dom_element.hide();
-            return dom_element;
-        }
-        
-        self.select = function (start_point) {
-            start = start_point;
-            offset = viewer.dom_element.offset();
-            var element = self.dom_element;
-            element.css("left", start_point.x - offset.left);
-            element.css("top", start_point.y - offset.top);
-            element.css("width", 0);
-            element.css("height", 0); 
-            self.show();
-            
-            viewer.dom_element.bind("mousemove", onMouseMove);
-            jQuery(document).bind("mouseup", onMouseUp);           
-        }
-
-        var onMouseMove = function (event) {
-            var left   = Math.min(start.x, event.pageX) - offset.left;
-            var top    = Math.min(start.y, event.pageY) - offset.top;
-            var width  = Math.abs(event.pageX - start.x);
-            var height = Math.abs(event.pageY - start.y);
-            var element = self.dom_element;
-            
-            element.css("left", left);
-            element.css("top", top);
-            element.css("width", width);
-            element.css("height", height);      
-        }
-        
-        var onMouseUp = function () {
-            viewer.dom_element.unbind("mousemove", onMouseMove);
-            jQuery(document).unbind("mouseup", onMouseUp);  
-            self.hide();
-        }
-        
-        return self;
     }
 
 });

@@ -171,9 +171,6 @@ webact.in_package("viewport", function (package) {
             update();
             viewport.broadcast("changed");    
         }
-
-        viewport.viewBox = function (area) {
-        }
         
         // ** Zoom
         
@@ -181,6 +178,13 @@ webact.in_package("viewport", function (package) {
          	var level = Math.ceil(Math.log(scale) / Math.log(ZOOM_STEP));
          	var raw_scale = Math.pow(ZOOM_STEP, level);
          	return Math.max(minimum_scale, Math.min(raw_scale, 1.0));
+        }
+        
+        var boxScale = function (box) {
+            var dimensions = box.dimensions();  
+        	var horizontal_scale = view_size.width * scale / dimensions.width;
+        	var vertical_scale = view_size.height * scale / dimensions.height; 
+        	return snapToLayer(Math.min(horizontal_scale, vertical_scale));
         }
         
         viewport.canZoomIn = function () {
@@ -211,10 +215,17 @@ webact.in_package("viewport", function (package) {
             animator.zoomTo(minimum_scale, center);
         }
         
-        viewport.startZoom = function () {
-        }
-        
-        viewport.endZoom = function () {
+        viewport.zoomBox = function (view_box) {
+        	var target_center = view_box.center().project(scene_transform);
+
+            var dimensions = view_box.dimensions();        	
+        	var target_scale = 0;
+        	if (dimensions.width > 2 && dimensions.height > 2)
+        		target_scale = boxScale(view_box);
+        	else
+        		target_scale = snapToLayer(scale * ZOOM_STEP);
+        	
+        	animator.zoomTo(target_scale, target_center);
         }
         
         // ** Pan

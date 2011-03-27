@@ -188,6 +188,10 @@ webact.in_package("geometry", function (geometry) {
         return makePoint(this.right, this.bottom);
     }
     
+    rectangle.center = function () {
+        return makePoint((this.left + this.right) / 2, (this.top + this.bottom) / 2);
+    }
+    
     rectangle.equals = function (other) {
         return (this.left   == other.left  ) 
             && (this.top    == other.top   )

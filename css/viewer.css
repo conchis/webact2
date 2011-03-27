@@ -1,8 +1,25 @@
-
+/* @override http://localhost/~jonathan/webact2/css/viewer.css */
 
 .wa_image_viewer {
     position: absolute;
     overflow: hidden;
+}
+
+.wa_image_selector {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border: 1px solid #00A;
+}
+
+.wa_image_controls {
+    position: absolute;
+    width: 200px;
+    height: 205px;
+    left: 310px;
+    top: 380px;
+    background-color: white;
+    border: 1px solid #999;
 }
 
 .wa_image_navigator {
@@ -11,8 +28,8 @@
     overflow: auto;
     margin: 0;
     padding: 0;
-    right: 10px;
-    bottom: 10px;
+    left: 5px;
+    top: 5px;
     overflow: hidden;
     border: 1px dotted #818181;
 }
@@ -33,14 +50,15 @@
 
 .wa_image_slider {
     position: absolute;
-    right: 170px;
-    bottom: 20px;
+    right: 15px;
+    top: 90px;
 }
 
 .wa_image_buttons {
     position: absolute;
-    right: 190px;
-    bottom: 20px;
+    right: 5px;
+    top: 5px;
+    width: 30px;
 }
 
 .wa_image_buttons a {
@@ -48,9 +66,4 @@
     height: 22px;
 }
 
-.wa_image_selector {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    border: 1px solid #00A;
-}
+
