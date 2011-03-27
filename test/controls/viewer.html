@@ -36,11 +36,15 @@
 
 $(document).ready(function () {
     eval(webact.imports("viewer"));
+    
     var viewer = makeViewer({
         width: 512, height: 512, 
         image_url: "../_images/boston1888"
     });
     viewer.create($("#viewer"));
+    
+    var controls = makeViewerControls(viewer);
+    controls.create($("body"));
 });
 
 </script>

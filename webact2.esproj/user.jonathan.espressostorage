@@ -7,13 +7,13 @@
 	<key>ESProjectWindowState</key>
 	<dict>
 		<key>ContentSize</key>
-		<string>{1083, 774}</string>
+		<string>{869, 732}</string>
 		<key>ProjectURL</key>
 		<string>file://localhost/Users/jonathan/Sites/webact2/webact2.esproj/</string>
 		<key>StateType</key>
 		<string>ProjectWindow</string>
 		<key>TopLeftPoint</key>
-		<string>{0, 878}</string>
+		<string>{54, 850}</string>
 	</dict>
 	<key>com.macrabbit.Espresso.FileManager.DisclosureCollapsed</key>
 	<false/>
@@ -22,7 +22,7 @@
 		<key>ExpandedURLs</key>
 		<array>
 			<string>file://localhost/Users/jonathan/Sites/webact2/css</string>
-			<string>file://localhost/Users/jonathan/Sites/webact2/js/jquery-ui</string>
+			<string>file://localhost/Users/jonathan/Sites/webact2/js</string>
 			<string>file://localhost/Users/jonathan/Sites/webact2/test/controls</string>
 		</array>
 	</dict>
@@ -32,20 +32,6 @@
 	<dict>
 		<key>Tabs</key>
 		<array>
-			<dict>
-				<key>StateType</key>
-				<string>PreviewTab</string>
-				<key>Title</key>
-				<string>Test Viewer</string>
-				<key>URL</key>
-				<string>file:///Users/jonathan/Sites/webact2/test/controls/viewer.html</string>
-			</dict>
-			<dict>
-				<key>DocumentURL</key>
-				<string>file://localhost/Users/jonathan/Sites/webact2/test/controls/viewer.html</string>
-				<key>StateType</key>
-				<string>DefaultTab</string>
-			</dict>
 			<dict>
 				<key>DocumentURL</key>
 				<string>file://localhost/Users/jonathan/Sites/webact2/css/viewer.css</string>
@@ -60,15 +46,13 @@
 			</dict>
 			<dict>
 				<key>DocumentURL</key>
-				<string>file://localhost/Users/jonathan/Sites/webact2/js/viewport.js</string>
+				<string>file://localhost/Users/jonathan/Sites/webact2/test/controls/viewer.html</string>
 				<key>StateType</key>
 				<string>DefaultTab</string>
 			</dict>
 			<dict>
-				<key>DocumentURL</key>
-				<string>file://localhost/Users/jonathan/Sites/webact2/js/geometry.js</string>
 				<key>StateType</key>
-				<string>DefaultTab</string>
+				<string>PreviewTab</string>
 			</dict>
 		</array>
 	</dict>

@@ -44,6 +44,15 @@ webact.in_package("viewer", function (package) {
 		// Selection rectangle
 		var selector = null;
 		
+		
+		viewer.getViewport = function () {
+		    return viewport;
+		}
+		
+		viewer.getImageURL = function () {
+		    return image_url;
+		}
+		
         viewer.generate = function (container) {
             var dom_element = jQuery("<div/>", {
             	"class": "wa_image_viewer"
@@ -59,8 +68,8 @@ webact.in_package("viewer", function (package) {
         }
         
         var generateControls = function (dom_element) {   
-            controls = makeControls(viewer, viewport, image_url);
-            controls.create(dom_element.parent());
+            //controls = makeControls(viewer);
+            //controls.create(dom_element.parent());
         }
 
         viewer.load = function (image_url, dom_element) {
@@ -68,14 +77,12 @@ webact.in_package("viewer", function (package) {
                 viewport = makeViewport(pyramid.dimensions(), 
                     makeDimensions(width, height)); 
                 image = makeTiledImage(image_url, pyramid, viewport);       
-                image.generate(dom_element, dom_element);
-                
+                image.generate(dom_element, dom_element);                
                 selector = makeSelector(viewer, viewport);
-                selector.create(dom_element);
-                
+                selector.create(dom_element);              
                 generateControls(dom_element);
-
-                attachEvents(dom_element);               
+                attachEvents(dom_element);  
+                viewer.broadcast("loaded");             
             });
         }
         
@@ -192,14 +199,28 @@ webact.in_package("viewer", function (package) {
         return self;
     }
     
-    var makeControls = function (viewer, viewport, image_url) {
+    package.makeViewerControls = function (viewer) {
         var self = makeControl({});
+        
+        var viewport = null;
+        var image_url = null;
+        
+        var initialize = function () {
+            viewer.addListener("loaded", self);
+        }
         
         self.generate = function (container) {
             var dom_element = jQuery("<div/>", {
                 "class": "wa_image_controls"
             });  
             container.append(dom_element);
+            return dom_element;
+        }
+        
+        self.loaded = function () {
+            viewport = viewer.getViewport();
+            image_url = viewer.getImageURL();
+            var dom_element = self.dom_element;
             
             var navigator = makeNavigator(viewport, image_url);
             navigator.create(dom_element);
@@ -211,6 +232,7 @@ webact.in_package("viewer", function (package) {
             buttons.create(dom_element);
         }
           
+        initialize();
         return self;
     }
     
