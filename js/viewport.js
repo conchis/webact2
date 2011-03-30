@@ -18,6 +18,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+ 
+/*
+    File: viewport.js
+    
+    Model for tracking and altering a view into a (scaled, rotated) scene 
+    coordinate space.
+*/
 
 webact.in_package("viewport", function (viewport) {
 

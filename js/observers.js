@@ -16,6 +16,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+ 
+ 
+/*
+    File: observers.js
+    
+    Implements the observer pattern so as to support MVC architecture
+    for JavaScript client applications.
+*/
 
 webact.in_package("observers", function (observers) {
 
@@ -23,19 +31,32 @@ webact.in_package("observers", function (observers) {
     
     var slice = Array.prototype.slice;
     
-    // Mixes in broadcaster parts.This implementation of the observer pattern 
-    // is designed to allow a listener to relay a broadcast to other listeners.
+    /*
+        Class: MixinBroadcaster
+    
+        Mixes in broadcaster parts. This implementation of the observer pattern 
+        is designed to allow a listener to relay a broadcast to other listeners.
+    */
     
     observers.mixinBroadcaster = function (self) {
     
         var listener_map = {};
+        
+        /*
+            Function: addListener
     
-        // Adds a listener associated with a specified selector and listener
-        // method. The listener argument may be either a function to be called
-        // when a broadcast is received, or an object. If the listener argument
-        // is an object, a broadcast will cause the named method to be called
-        // on the object. If no method_name is specified, a method with the same
-        // same as the selector will be called.
+            Adds a listener associated with a specified selector and listener
+            method. The listener argument may be either a function to be called
+            when a broadcast is received, or an object. If the listener argument
+            is an object, a broadcast will cause the named method to be called
+            on the object. If no method_name is specified, a method with the same
+            same as the selector will be called.
+            
+            Parameters:
+                selector - identifies broadcasts that are to be listened to
+                listener - object to receive broadcasts or function to invoke
+                method_name - (optional) name of method to call on listener object
+        */
     
         self.addListener = function (selector, listener, method_name) {
             // Get listeners array for the selector. If none found,
@@ -59,9 +80,19 @@ webact.in_package("observers", function (observers) {
                 });
             }
         };
+        
+        /*
+            Function: removeListener
     
-        // Removes a specified listener. Note this only works for
-        // functions.
+            Removes a specified listener.
+            
+            Parameters:
+                select   - selector of listener
+                listener - listener object or function
+                
+            Returns:
+                True if listener removed, false otherwise.
+        */
     
         self.removeListener = function (selector, listener) {
         
@@ -78,8 +109,12 @@ webact.in_package("observers", function (observers) {
             listeners.splice(index, 1);
             return true;
         };
-    
-        // Tests if the broadcaster has a specified listener.
+        
+        /*
+            Function hasListener
+            Returns:
+                True if self has the specified listener, false otherwise.
+        */
     
         self.hasListener = function (selector, listener) {
             // Get listeners for selector
@@ -92,7 +127,19 @@ webact.in_package("observers", function (observers) {
             return listeners.indexOf(listener) >= 0;
         };
         
-        // Broadcasts a message to all listeners
+        /*
+            Function: sendBroadcast
+            
+            Broadcasts a message to all listeners by calling a designated function.
+            The broadcaster identifies the selector used to select the listeners
+            that should receive the broadcast. A broadcast may be sent with an
+            array of arguments that are to be passed to each listener function.
+            
+            Parameters:
+                selector      - indentifies the broadcast
+                argument_list - (optional) array of arguments to pass to listener functions
+                source        - (optional) original source of broadcast
+        */
     
         self.sendBroadcast = function (selector, argument_list, source) {
             // Set default source
@@ -112,8 +159,18 @@ webact.in_package("observers", function (observers) {
                 listeners[index].apply(null, listener_arguments);
             }
         };
+        
+        /*
+            Function: broadcast
     
-        // Broadcasts a message to all listeners
+            Broadcasts a message to all listeners. Unlike sendBroadcast, any
+            arguments that are to be passed to listener functions are passed
+            directly to the broadcast method.
+            
+            Parameters:
+                selector - indentifies the broadcast
+                ...      - arguments to pass to listener functions
+        */
     
         self.broadcast = function (selector) { // Other arguments            
             self.sendBroadcast(selector, slice.call(arguments, 1));
@@ -121,7 +178,11 @@ webact.in_package("observers", function (observers) {
     
     };
     
-    // Make an object self functions as a broadcaster.
+    /*
+        Class: Broadcaster
+    
+        A class (non-mixin) version of the MixinBroadcaster
+    */
     
     observers.makeBroadcaster = function () {
         var self = {};

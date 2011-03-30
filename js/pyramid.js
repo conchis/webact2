@@ -17,6 +17,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+ 
+ /*
+     File: pyramid.js
+     
+     Provides a class for modling a timed image's pyramid of tiles.
+ */
 
 webact.in_package("pyramid", function (pyramid) {
 
@@ -26,7 +32,25 @@ webact.in_package("pyramid", function (pyramid) {
     var RESOLUTION_MULTIPLIER = Math.sqrt(2);
     var LOG_MULTIPLIER = Math.log(RESOLUTION_MULTIPLIER);
     
-    // Model of tile pyramid
+    /*
+        Class: Pyramid
+        
+        Mathematical model of a tile pyramid (for a tiled image)
+        
+        Layer 0 has a single tile containg the entire image. Each following layer
+        contains a matrix of n x m tiles, enough to cover the entire image at a
+        higher resolution. At the base of the pyramid, tiles are at the resolution
+        of the original image. Each tile is 256 x 256 pixels.
+            
+        The base layer has scale 1.0. On each layer above the base, the scale is
+        the scale of the prior layer times the sqare root of two. This means that it
+        is necessary to advance two layers in order to double the dimensions of the
+        area of the orignal image covered by each tile.
+        
+        Parameters:
+            width  - width of tiled image
+            height - height of tiled image
+    */
     
     pyramid.makePyramid = function (width, height) {
     
@@ -43,13 +67,38 @@ webact.in_package("pyramid", function (pyramid) {
         self.tile_size = TILE_SIZE;
         self.layer_count = layer_count;
         
+        /*
+            Function: dimensions
+            Returns: 
+                Dimensions of the tiled image.
+        */
+        
         self.dimensions = function () {
             return makeDimensions(self.width, self.height);
         };
         
+        /*
+            Function: layers
+            Returns: 
+                Number of layers in the tile pyramid.
+        */
+        
         self.layers = function () {
             return layer_count;
         };
+        
+        /*
+            Function: layerForScale
+            
+            Computes the layer of the pyramid with tiles at a specified resolution
+            (scale) or better.
+            
+            Parameters:
+                scale - desired scale (1 = original image)
+                
+            Returns: 
+                Pyramid layer number
+        */
         
         self.layerForScale = function (scale) {
             var last_layer = layer_count - 1;
@@ -57,10 +106,36 @@ webact.in_package("pyramid", function (pyramid) {
             return Math.max(last_layer - Math.floor(level + 0.0000001), 0);
         };
         
+        /*
+            Function: scaleForLayer
+            
+            Computes the scale (1 = original image) of tiles in a specifed pyramid
+            layer.
+            
+            Parameters:
+                layer_number - number of layer in the pyramid (0 = top)
+                
+            Returns:
+                scale of tiles in layer
+        */
+        
         self.scaleForLayer = function (layer_number) {
             var layer_index = layer_count - layer_number - 1;
             return 1.0 / Math.pow(RESOLUTION_MULTIPLIER, layer_index);
         };
+        
+        /*
+            Function: tileExtent
+            
+            Computes the size of the area of the original image covered by tiles 
+            in a specified layer.
+            
+            Parameters:
+                layer_number - index of pyramid layer
+                
+            Returns:
+                Size of each side in a square area in image coordinates
+        */
         
         self.tileExtent = function (layer_number) {
             var layer_index = layer_count - layer_number - 1;
@@ -68,11 +143,41 @@ webact.in_package("pyramid", function (pyramid) {
             return Math.floor(TILE_SIZE * scale);
         };
         
+        /*
+            Function: tileGridSize
+            
+            Computes the number of columns and rows of tiles on a specified
+            pyramid layer.
+            
+            Parameters:
+                layer_number - index of pyramid layer
+                
+            Returns: 
+                Dimensions object containing width and height in tiles           
+        
+        */
+        
         self.tileGridSize = function (layer_number) {
             var extent = self.tileExtent(layer_number);
             return makeDimensions(
                 Math.ceil(width  / extent), Math.ceil(height / extent));
         };
+        
+        /*
+            Function: tileSourceRectangle
+            
+            Computes a rectangle in image coordinates that is depicted in a specified
+            tile and layer.
+            
+            Parameters:
+                column         - column index of tile on specified layer
+                row            - row index of tile on specified layer
+                layer_number   - index of pyramid layer
+                
+            Returns:
+                Rectangle in image coordinates
+                
+        */
         
         self.tileSourceRectangle = function (column, row, layer_number) {
             var layer_index = layer_count - layer_number - 1;
@@ -81,6 +186,22 @@ webact.in_package("pyramid", function (pyramid) {
             return makeRectangleWidthHeight(
                 extent * column, extent * row, extent, extent);
         };
+        
+        /*
+            Function: clippedDimensions
+            
+            Computes the size of the area of a tile that is actually filled with 
+            image data. A tile may lay on the lower or right boundry of the image 
+            and may cover more that the original image.
+            
+            Parameters:
+                column         - column index of tile on specified layer
+                row            - row index of tile on specified layer
+                layer_number   - index of pyramid layer
+                
+            Returns:
+                Dimensions: width and height of filled area of tile in pixels
+        */
         
         self.clippedDimensions = function (column, row, layer_number) {
             var layer_index = layer_count - layer_number - 1;
@@ -93,17 +214,58 @@ webact.in_package("pyramid", function (pyramid) {
             return makeDimensions(clippedWidth, clippedHeight);
         };
         
+        /*
+            Function: tileColumn
+            
+            Computes the column index of a tile that includes an x coordinate in
+            image pixels on a specified tile layer.
+            
+            Parameters:
+                x             - x coordinate in original image pixels
+                layer_number  - index of pyramid layer
+                
+            Returns:
+                Column index (integer)
+        */
+        
         self.tileColumn = function (x, layer_number) {
             var layer_index = layer_count - layer_number - 1;
             var extent = TILE_SIZE * Math.pow(RESOLUTION_MULTIPLIER, layer_index);
             return Math.floor(x / extent);
         };
         
+        /*
+            Function: tileRow
+            
+            Computes the row index of a tile that includes a y coordinate in
+            image pixels on a specified image layer.
+            
+            Parameters:
+                y             - y coordinate in original image pixels
+                layer_number  - index of pyramid layer
+                
+            Returns:
+                Row index (integer)
+        */
+        
         self.tileRow = function (y, layer_number) {
             var layer_index = layer_count - layer_number - 1;
             var extent = TILE_SIZE * Math.pow(RESOLUTION_MULTIPLIER, layer_index);
             return Math.floor(y / extent);
         };
+        
+        /*
+            Function: forTiles
+            
+            Invokes a callback function (closure) on each tile column, row
+            in a specified tile layer that intersects a specified rectangle 
+            in image coordinates.
+            
+            Parameters:
+                rectangle    - rectangle in image coordinates
+                layer_number - layer index in pyramid
+                callback     - function (column, row, layer_number, self)
+        */
         
         self.forTiles = function (rectangle, layer_number, callback) {
             var grid_size = self.tileGridSize(layer_number);
@@ -122,13 +284,24 @@ webact.in_package("pyramid", function (pyramid) {
             
             for (var row = top; row <= bottom; row += 1) {
                 for (var column = left; column <= right; column += 1) {
-                    callback(column, row, layer_number, this);
+                    callback(column, row, layer_number, self);
                 }
             }
         };
         
         return self; 
     };
+    
+    /*
+        Function: loadPyramid
+        
+        Asynchronously loads a Pyramid object from a specified tiled image
+        URL. Invokes a callback funtion with the loaded pyramid.
+        
+        Parameters:
+            image_url - URL of tiled image (including XML metadata)
+            callback  - function (pyramid)
+    */
     
     pyramid.loadPyramid = function (image_url, callback) {
         var parseXML = function (xml) {

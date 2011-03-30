@@ -17,22 +17,33 @@
  * limitations under the License.
  */
  
-// Establishes the webact object, the root object for all webact packages.
- 
-// This file implements a very simple package system that is used to allow
-// each package to create and use a separate namespace without requiring
-// that all names be fully qualified.
-
-// This file must be loaded after jQuery and before any other webact packages.
+ /*
+    File: packages.js
+    
+    Establishes the webact object, the root object for all webact packages. This file 
+    implements a very simple package system that is used to allow each package to 
+    create and use a separate namespace without requiring that all names be fully 
+    qualified.
+    
+    This file must be loaded after jQuery and before any other webact packages.
+*/
 
 webact = this.webact || {};
 (function (webact, $) {
 
-    // The create function constructs a new object from a specified prototype.
-    // This is similar to the create method from p22 of "JavaScript The 
-    // Good Parts" by Douglas Crawford, O'Reilly, 2008. This version lets the 
-    // caller initialize members of the new object. The initial parameter is 
-    // optional.
+    /*
+        Function: create
+        
+        The create function constructs a new object from a specified prototype.
+        This is similar to the create method from p22 of "JavaScript The 
+        Good Parts" by Douglas Crawford, O'Reilly, 2008. This version lets the 
+        caller initialize members of the new object. The initial parameter is 
+        optional.
+        
+        Parameters:
+            proto   - prototype for new object
+            initial - initial values
+    */
 
     var create = function (proto, initial) {
         var constructor, result, name;
@@ -50,12 +61,21 @@ webact = this.webact || {};
     };
     webact.create = create;
     
-    // Package Prototype
+    /*
+        Class: Package
+        
+        Prototype for all packages.
+    */
     
     var Package = {  
         name: null,
      
-        // Returns all the names exported by this package
+        /*
+            Function: names
+            
+            Returns:
+                All the names exported by this package
+        */
         
         names: function () {
             var all_names, name;
@@ -68,8 +88,13 @@ webact = this.webact || {};
             return all_names;
         },
         
-        // Returns an experession, when evaluated, will import all of
-        // the exported names from this package into a local scope.
+        /*
+            Function: exports
+            
+            Returns:
+                An experession, when evaluated, will import all of
+                the exported names from this package into a local scope.
+        */
         
         exports: function () {
             var names, result, index, name;
@@ -86,10 +111,21 @@ webact = this.webact || {};
             return result.join(";");
         }
     };
-
-	// Opens a package for additions. Note that this may be done any number
-	// of times to add new names. All exported names should be set in the 
-	// exports argument to the body function.
+    
+    /*
+        Function: in_package
+        
+        Opens a package for additions. Note that this may be done any number
+        of times to add new names. All exported names should be set in the 
+        exports argument to the body function.
+        
+        Prameters:
+            name - package name
+            body - function (package_object) that adds items to the package
+            
+        Returns:
+            Package
+    */
 
 	webact.in_package = function (name, body) {
 	    // Find existing package, or create new from prototype
@@ -108,9 +144,16 @@ webact = this.webact || {};
 		return package_object;
 	};
 	
-	// Returns an experession that, when evaluated, imports all of 
-	// the exported symbols in all of the named packages into the
-	// local scope. Arguments are package names.
+	/*
+	    Function: imports
+	    
+        Returns an experession that, when evaluated, imports all of 
+        the exported symbols in all of the named packages into the
+        local scope. Arguments are package names. 
+        
+        Returns:
+            Expression that imports exported symbols from a package   
+	*/
 	
 	webact.imports = function () {
 	    var result, index, name, pack;

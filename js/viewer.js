@@ -36,7 +36,7 @@ webact.in_package("viewer", function (viewer) {
     viewer.makeViewer = function (options) {
 		var self = makeControl(options);
 		
-		var mode = SELECT_MODE;
+		var mode = PAN_MODE; //SELECT_MODE;
 		
 		var width  = options.width;
 		var height = options.height;

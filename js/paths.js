@@ -16,12 +16,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-// Utility functions for splitting, joining, and normalizing paths
+
+/* 
+    File: paths.js
+    
+    Utility functions for splitting, joining, and normalizing paths.
+*/
 
 webact.in_package("paths", function (paths) { 
 
-	// Returns a new Error used to signal that a path would be invalid.
+    /*
+        Class: InvalidPathError
+        
+	    Error class used to signal that a path would be invalid.
+	    
+	    Parameters:
+	        path - invalid path string
+	*/
 
 	var makeInvalidPathError = function (path) {
 		var error = new Error("Invalid Path: " + path);
@@ -29,7 +40,17 @@ webact.in_package("paths", function (paths) {
 		return error;
 	};
     
-    // Splits a path into tokens while normalizing the resulting path.
+    /*
+        Function: split
+        
+        Splits a path into tokens while normalizing the resulting path.
+        
+        Parameters:
+            path - Path to be split in to tokens
+            
+        Returns:
+            Tokens in path
+    */
 
     paths.split = function (path) {
         var tokens = path.split("/");

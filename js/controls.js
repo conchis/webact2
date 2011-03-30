@@ -17,7 +17,11 @@
  * limitations under the License.
  */
 
-// Provides a base class of visible controls.
+/*
+    File: controls.js
+    
+    Provides a base class and convensions for visible controls.
+*/
 
 webact.in_package("controls", function (controls) {
 
