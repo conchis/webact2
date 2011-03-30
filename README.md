@@ -3,6 +3,8 @@
 WebAct2 is a library of web-based media and content tools aimed at supporting the creation 
 of web-based environents for research and learning.
 
+*Warning, not much documentation as yet_*
+
 ## Image Viewer
 
 Alpha release of the JavaScript zooming viewer for high resolution images. We are 
