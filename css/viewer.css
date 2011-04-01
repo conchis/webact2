@@ -18,6 +18,7 @@
     height: 205px;
     left: 300px;
     top: 370px;
+    overflow: hidden;
 }
 
 .wa_image_panel {

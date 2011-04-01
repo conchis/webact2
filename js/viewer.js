@@ -231,17 +231,36 @@ webact.in_package("viewer", function (viewer) {
         var viewport = null;
         var image_url = null;
         
+        var position = null;
         var size = null;
+        var icon_size = null;
+        
         var icon = null;
         var panel = null;
         
         var initialize = function () {
             viewer.addListener("loaded", self);
         }; 
+        
+        var showPanel = function () {
+            this.dom_element.css(position);
+            icon.hide();
+            panel.show();
+        };
+        
+        var hidePanel = function () {
+            //panel.hide("fade", 100);
+            var dom_element = this.dom_element;
+            dom_element.css({
+                left: position.left + size.width - icon_size.width, 
+                top: position.top + size.height - icon_size.height
+            });
+            icon.show();
+            panel.hide();
+        };
 
         var onMouseOver = function (event) {
-            icon.hide();
-            panel.show("fade", 200);
+            showPanel();
         };
         
         var onMouseOut = function (event) {
@@ -254,8 +273,7 @@ webact.in_package("viewer", function (viewer) {
                 return;
             }
             
-            panel.hide("fade", 200);
-            icon.show();
+            hidePanel();
         };
         
         self.generate = function (container) {
@@ -271,8 +289,9 @@ webact.in_package("viewer", function (viewer) {
                 "class": "wa_image_panel"
             });
             dom_element.append(panel);
-            panel.css({width: size.width, height: size.height});
-            panel.hide();
+            this.dom_element = dom_element;
+            
+            panel.css({width: size.width - 2, height: size.height - 2});
             
             var navigator = makeNavigator(viewport, image_url);
             navigator.create(panel);
@@ -290,12 +309,14 @@ webact.in_package("viewer", function (viewer) {
             var scene_size = viewport.getSceneSize();
             var width = 64;
             var height = scene_size.height * width / scene_size.width;
+            icon_size = makeDimensions(width, height);
             
             icon = jQuery("<div/>", {
                 "class": "wa_image_icon"
             });
             dom_element.append(icon);
-            icon.css({left: size.width - width - 5, top: size.height - height - 5});
+            //icon.css({left: size.width - width - 5, top: size.height - height - 5});
+            icon.css({left: 0, top: 0});
             
             var shadow = jQuery("<img/>", {
                 "src": "../../images/semishadow.png"
@@ -322,8 +343,11 @@ webact.in_package("viewer", function (viewer) {
             size = makeDimensions(200, scene_size.height * (150 / scene_size.width) + 20);
             dom_element.css({width: size.width, height: size.height});
             
-            generatePanel(dom_element);
+            position = dom_element.offset();
+            
             generateIcon(dom_element);
+            generatePanel(dom_element);
+            hidePanel();
         };
           
         initialize();
@@ -414,11 +438,15 @@ webact.in_package("viewer", function (viewer) {
                 
         navigator.changed = function () {
             var rectangle = viewport.getView().bounds().scale(scale);
-            var dimensions = rectangle.dimensions();           
-            indicator.css("left", Math.round(rectangle.left));
-            indicator.css("top", Math.round(rectangle.top));
-            indicator.css("width", Math.round(dimensions.width - 2));
-            indicator.css("height", Math.round(dimensions.height - 2));
+            var dimensions = rectangle.dimensions(); 
+              
+            var position = {
+                "left":   Math.max(Math.round(rectangle.left), 0),
+                "top":    Math.max(Math.round(rectangle.top), 0),
+                "width":  Math.min(Math.round(dimensions.width), width) - 2,
+                "height": Math.min(Math.round(dimensions.height), height) - 2
+            };
+            indicator.css(position);
         };
         
         initialize();
