@@ -1,0 +1,6 @@
+
+1. Viewer: attach mouse up handler to body so as to capture mouse up events outside viewer rectangle.
+2. Controls: allow mouse move events to perk even when selecting the slider handle or button.
+3. Add zoom / pan mode buttons to controls
+4. Option key should zoom out in zoom mode
+5. Tighten control box
