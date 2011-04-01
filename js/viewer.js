@@ -36,7 +36,8 @@ webact.in_package("viewer", function (viewer) {
     viewer.makeViewer = function (options) {
 		var self = makeControl(options);
 		
-		var mode = PAN_MODE; //SELECT_MODE;
+		var mode = SELECT_MODE;
+		var shift_mode = false;
 		
 		var width  = options.width;
 		var height = options.height;
@@ -72,9 +73,21 @@ webact.in_package("viewer", function (viewer) {
             return dom_element;
         };
         
+
+        var setMode = function (new_mode) {
+            if (new_mode === undefined)
+                new_mode = (mode == SELECT_MODE) ? PAN_MODE : SELECT_MODE;
+            mode = new_mode;
+            if (mode == PAN_MODE)
+                self.dom_element.css("cursor", "move");
+            else
+                self.dom_element.css("cursor", "default");
+        };
+        
         var onPan = function (event) {
             var mouse_point = makePoint(event.pageX, event.pageY);
             viewport.pan(mouse_point);
+            setMode(mode);
         };
         
         var onPanEnd = function (event) {
@@ -82,7 +95,7 @@ webact.in_package("viewer", function (viewer) {
             viewport.endPan();
             
             element.unbind("mousemove", onPan);
-            jQuery("body").unbind("mouseup", onPanEnd);          
+            jQuery("body").unbind("mouseup", onPanEnd);
         };
         
         var onMouseDown = function (event) {
@@ -98,6 +111,21 @@ webact.in_package("viewer", function (viewer) {
                 selector.select(mouse_point, event);
             }
         };
+ 
+        var onKey = function (event) {
+            if (event.shiftKey) {
+                if (!shift_mode) {
+                    setMode();
+                    shift_mode = true;
+                }
+            }
+            else {
+                if (shift_mode) {
+                    setMode();
+                    shift_mode = false;
+                }
+            }
+        };
 
         self.load = function (image_url, dom_element) {
             loadPyramid(image_url, function (pyramid) {
@@ -107,7 +135,10 @@ webact.in_package("viewer", function (viewer) {
                 image.generate(dom_element, dom_element);                
                 selector = makeSelector(self, viewport);
                 selector.create(dom_element);
-                dom_element.mousedown(onMouseDown);                
+                dom_element.mousedown(onMouseDown);
+                jQuery("body").bind("keydown", onKey);
+                jQuery("body").bind("keyup", onKey); 
+                setMode(mode);               
                 self.broadcast("loaded");             
             });
         };

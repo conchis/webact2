@@ -1,7 +1,7 @@
 # WebAct2 - Web-based Media Tools
 
 WebAct2 is a library of web-based media and content tools aimed at supporting the creation 
-of web-based environents for research and learning.
+of web-based environments for research and learning.
 
 *Warning, not much documentation as yet_*
 
