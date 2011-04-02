@@ -1,9 +1,5 @@
-
-1. Viewer: attach mouse up handler to body so as to capture mouse up events outside viewer rectangle.
-2. Controls: allow mouse move events to perk even when selecting the slider handle or button.
-3. Add zoom / pan mode buttons to controls
-4. Option key should zoom out in zoom mode
-5. Tighten control box
-9. Improve tile loading on Firefox to avoid showing edges, icon before image is loaded
-10. Firefox: inhibit tile selection / highlight on drag
+2. Adjust slider height depending on height of the thumbnail. 
+3. Improve tile loading on Firefox to avoid showing edges, icon before image is loaded
+4. Firefox: inhibit tile selection / highlight on drag
+5. Option key should zoom out in zoom mode
 

@@ -42,49 +42,63 @@ webact.in_package("viewer_controls", function (viewer_controls) {
         var icon = null;
         var panel = null;
         
+        var is_shown = true;
+        
         var initialize = function () {
             viewer.addListener("loaded", self);
         }; 
         
         var showPanel = function () {
-            this.dom_element.css(position);
-            icon.hide();
-            panel.show();
+            if (!is_shown) {
+                this.dom_element.css(position);
+                icon.hide();
+                panel.show();
+                jQuery("body").bind("mousemove", onMouseMove);
+                is_shown = true;
+            }
         };
         
         var hidePanel = function () {
-            //panel.hide("fade", 100);
-            var dom_element = this.dom_element;
-            dom_element.css({
-                left: position.left + size.width - icon_size.width, 
-                top: position.top + size.height - icon_size.height
-            });
-            icon.show();
-            panel.hide();
-        };
-
-        var onMouseOver = function (event) {
-            showPanel();
+            if (is_shown) {
+                var dom_element = this.dom_element;
+                dom_element.css({
+                    left: position.left + size.width - icon_size.width, 
+                    top: position.top + size.height - icon_size.height
+                });
+                icon.show();
+                panel.hide();
+                jQuery("body").unbind("mousemove", onMouseMove);
+                is_shown = false;
+            }
         };
         
-        var onMouseOut = function (event) {
-            var offset = self.dom_element.offset();
-            
+        var onMouseMove = function (event) {
+            if (isMouseOver(event)) {
+                showPanel();
+            }
+            else {
+                hidePanel();
+            }
+        };
+        
+        var isMouseOver = function (event) {
+            var offset = self.dom_element.offset();          
             var pageX = event.pageX;
             var pageY = event.pageY;
             if (pageX >= offset.left && pageX <= (offset.left + size.width) &&
                 pageY >= offset.top  && pageY <= (offset.top + size.height)) {
-                return;
+                return true;
             }
-            
-            hidePanel();
+            else
+                return false;
         };
         
         self.generate = function (container) {
             var dom_element = jQuery("<div/>", {
                 "class": "wa_image_controls"
             });  
-            container.append(dom_element);  
+            container.append(dom_element); 
+            dom_element.bind("mousemove", onMouseMove); 
             return dom_element;
         };
         
@@ -104,9 +118,7 @@ webact.in_package("viewer_controls", function (viewer_controls) {
             slider.create(panel);
             
             var buttons = makeViewerButtons(viewer);
-            buttons.create(panel);
-            
-            panel.bind("mouseout", onMouseOut);
+            buttons.create(panel);  
         };
         
         var generateIcon = function (dom_element) {
@@ -134,8 +146,6 @@ webact.in_package("viewer_controls", function (viewer_controls) {
             });
             image.css("width", width);
             icon.append(image);
-            
-            icon.bind("mouseover", onMouseOver);
         };
 
         self.loaded = function () {
