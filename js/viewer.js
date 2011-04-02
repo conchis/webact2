@@ -33,6 +33,9 @@ webact.in_package("viewer", function (viewer) {
     var SELECT_MODE = 0;
     var PAN_MODE    = 1;
     
+    viewer.SELECT_MODE = SELECT_MODE;
+    viewer.PAN_MODE = PAN_MODE;
+    
     viewer.makeViewer = function (options) {
 		var self = makeControl(options);
 		
@@ -73,10 +76,15 @@ webact.in_package("viewer", function (viewer) {
             return dom_element;
         };
         
+        self.getMode = function () { 
+            return mode; 
+        }
+        
         var setMode = function (new_mode) {
             if (new_mode === undefined) {
                 new_mode = (mode === SELECT_MODE) ? PAN_MODE : SELECT_MODE;
             }
+            if (new_mode === mode) return;
             mode = new_mode;
             if (mode === PAN_MODE) {
                 self.dom_element.css("cursor", "move");
@@ -84,7 +92,9 @@ webact.in_package("viewer", function (viewer) {
             else {
                 self.dom_element.css("cursor", "default");
             }
+            self.broadcast("onModeChange", new_mode);         
         };
+        self.setMode = setMode;
         
         var onPan = function (event) {
             var mouse_point = makePoint(event.pageX, event.pageY);

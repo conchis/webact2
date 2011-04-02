@@ -7,13 +7,13 @@
 	<key>ESProjectWindowState</key>
 	<dict>
 		<key>ContentSize</key>
-		<string>{1138, 1074}</string>
+		<string>{1060, 785}</string>
 		<key>ProjectURL</key>
 		<string>file://localhost/Users/jonathan/Sites/webact2/webact2.esproj/</string>
 		<key>StateType</key>
 		<string>ProjectWindow</string>
 		<key>TopLeftPoint</key>
-		<string>{242, 1176}</string>
+		<string>{134, 877}</string>
 	</dict>
 	<key>com.macrabbit.Espresso.FileManager.DisclosureCollapsed</key>
 	<false/>
@@ -21,7 +21,7 @@
 	<dict>
 		<key>ExpandedURLs</key>
 		<array>
-			<string>file://localhost/Users/jonathan/Sites/webact2/doc</string>
+			<string>file://localhost/Users/jonathan/Sites/webact2/js</string>
 			<string>file://localhost/Users/jonathan/Sites/webact2/test/controls</string>
 		</array>
 	</dict>
@@ -58,12 +58,6 @@
 			<dict>
 				<key>DocumentURL</key>
 				<string>file://localhost/Users/jonathan/Sites/webact2/test/controls/viewer.html</string>
-				<key>StateType</key>
-				<string>DefaultTab</string>
-			</dict>
-			<dict>
-				<key>DocumentURL</key>
-				<string>file://localhost/Users/jonathan/Sites/webact2/test/controls/viewer_min.html</string>
 				<key>StateType</key>
 				<string>DefaultTab</string>
 			</dict>

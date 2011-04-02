@@ -25,6 +25,7 @@ webact.in_package("viewer_controls", function (viewer_controls) {
     eval(webact.imports("pyramid"));
     eval(webact.imports("viewport"));
     eval(webact.imports("controls"));
+    eval(webact.imports("viewer"));
     
     var makeNavigator, makeZoomSlider, makeViewerButtons; 
         
@@ -102,7 +103,7 @@ webact.in_package("viewer_controls", function (viewer_controls) {
             var slider = makeZoomSlider(viewport);
             slider.create(panel);
             
-            var buttons = makeViewerButtons(viewport);
+            var buttons = makeViewerButtons(viewer);
             buttons.create(panel);
             
             panel.bind("mouseout", onMouseOut);
@@ -143,7 +144,7 @@ webact.in_package("viewer_controls", function (viewer_controls) {
             image_url = viewer.getImageURL();
             
             var scene_size = viewport.getSceneSize();
-            size = makeDimensions(200, scene_size.height * (150 / scene_size.width) + 20);
+            size = makeDimensions(187, scene_size.height * (150 / scene_size.width) + 20);
             dom_element.css({width: size.width, height: size.height});
             
             position = dom_element.offset();
@@ -293,15 +294,21 @@ webact.in_package("viewer_controls", function (viewer_controls) {
     };
     
     
-    makeViewerButtons = function (viewport) {
-        var buttons = makeControl({});
+    makeViewerButtons = function (viewer) {
+        var self = makeControl({});
+        
+        var viewport = viewer.getViewport();
         
         var in_button = null;
         var out_button = null;
         var reset_button = null;
         
+        var zoom_button = null;
+        var pan_button = null;
+        
         var initialize = function () {
-            viewport.addListener("zoomed", buttons);
+            viewer.addListener("onModeChange", self);
+            viewport.addListener("zoomed", self);
         };
         
         var zoomIn = function (event) {
@@ -319,13 +326,23 @@ webact.in_package("viewer_controls", function (viewer_controls) {
             viewport.zoomReset();
         };
         
-        buttons.generate = function (container) {
+        var zoomMode = function (event) {
+            event.stopPropagation();
+            viewer.setMode(SELECT_MODE);
+        };
+        
+        var panMode = function (event) {
+            event.stopPropagation();
+            viewer.setMode(PAN_MODE);
+        };
+        
+        self.generate = function (container) {
             var dom_element = jQuery("<div/>", {
                 "class": "wa_image_buttons"
             });
             container.append(dom_element);
             
-            in_button = jQuery("<a/>");
+            in_button = jQuery("<a/>", {"class": "wa_in_button"});
             dom_element.append(in_button);
             in_button.button({
                 icons: {primary: "ui-icon-plus"},
@@ -334,37 +351,66 @@ webact.in_package("viewer_controls", function (viewer_controls) {
             });
             in_button.click(zoomIn);
             
-            out_button = jQuery("<a/>");
+            out_button = jQuery("<a/>", {"class": "wa_out_button"});
             dom_element.append(out_button);
             out_button.button({
                 icons: {primary: "ui-icon-minus"},
                 text: false,
                 label: "Zoom Out",
-                click: zoomOut
             });
             out_button.click(zoomOut);
             
-            reset_button = jQuery("<a/>");
+            reset_button = jQuery("<a/>", {"class": "wa_reset_button"});
             dom_element.append(reset_button);
             reset_button.button({
                 icons: {primary: "ui-icon-refresh"},
                 text: false,
                 label: "Reset",
-                click: zoomReset
             });
             reset_button.click(zoomReset); 
             
-            buttons.zoomed();                    
+            zoom_button = jQuery("<a/>", {"class": "wa_zoom_button"});
+            dom_element.append(zoom_button);
+            zoom_button.button({
+                icons: {primary: "ui-icon-search"},
+                text: false,
+                label: "Zoom Mode" 
+            });
+            zoom_button.click(zoomMode); 
+            
+            pan_button = jQuery("<a/>", {"class": "wa_pan_button"});
+            dom_element.append(pan_button);
+            pan_button.button({
+                icons: {primary: "ui-icon-arrow-4"},
+                text: false,
+                label: "Pan Mode"
+            });
+            pan_button.click(panMode); 
+            
+            self.zoomed();
+            self.onModeChange();                    
             return dom_element;
         };
         
-        buttons.zoomed = function () {
+        self.zoomed = function () {
             in_button.button(viewport.canZoomIn() ? "enable" : "disable");
             out_button.button(viewport.canZoomOut() ? "enable" : "disable");
         };
         
+        self.onModeChange = function () {
+            var mode = viewer.getMode();
+            if (mode === SELECT_MODE) {
+                zoom_button.button("disable");
+                pan_button.button("enable");
+            }
+            else {
+                zoom_button.button("enable");
+                pan_button.button("disable");
+            }   
+        };
+        
         initialize();
-        return buttons;
+        return self;
     };
 
 });
