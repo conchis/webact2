@@ -7,13 +7,13 @@
 	<key>ESProjectWindowState</key>
 	<dict>
 		<key>ContentSize</key>
-		<string>{1121, 639}</string>
+		<string>{1138, 1074}</string>
 		<key>ProjectURL</key>
 		<string>file://localhost/Users/jonathan/Sites/webact2/webact2.esproj/</string>
 		<key>StateType</key>
 		<string>ProjectWindow</string>
 		<key>TopLeftPoint</key>
-		<string>{37, 825}</string>
+		<string>{242, 1176}</string>
 	</dict>
 	<key>com.macrabbit.Espresso.FileManager.DisclosureCollapsed</key>
 	<false/>
@@ -21,6 +21,7 @@
 	<dict>
 		<key>ExpandedURLs</key>
 		<array>
+			<string>file://localhost/Users/jonathan/Sites/webact2/doc</string>
 			<string>file://localhost/Users/jonathan/Sites/webact2/test/controls</string>
 		</array>
 	</dict>
@@ -30,14 +31,6 @@
 	<dict>
 		<key>Tabs</key>
 		<array>
-			<dict>
-				<key>StateType</key>
-				<string>PreviewTab</string>
-				<key>Title</key>
-				<string>Test Viewer</string>
-				<key>URL</key>
-				<string>file:///Users/jonathan/Sites/webact2/test/controls/viewer.html</string>
-			</dict>
 			<dict>
 				<key>DocumentURL</key>
 				<string>file://localhost/Users/jonathan/Sites/webact2/js/viewer.js</string>
@@ -55,6 +48,34 @@
 				<string>file://localhost/Users/jonathan/Sites/webact2/doc/todo.txt</string>
 				<key>StateType</key>
 				<string>DefaultTab</string>
+			</dict>
+			<dict>
+				<key>DocumentURL</key>
+				<string>file://localhost/Users/jonathan/Sites/webact2/js/viewer_controls.js</string>
+				<key>StateType</key>
+				<string>DefaultTab</string>
+			</dict>
+			<dict>
+				<key>DocumentURL</key>
+				<string>file://localhost/Users/jonathan/Sites/webact2/test/controls/viewer.html</string>
+				<key>StateType</key>
+				<string>DefaultTab</string>
+			</dict>
+			<dict>
+				<key>DocumentURL</key>
+				<string>file://localhost/Users/jonathan/Sites/webact2/test/controls/viewer_min.html</string>
+				<key>StateType</key>
+				<string>DefaultTab</string>
+			</dict>
+			<dict>
+				<key>DocumentURL</key>
+				<string>file://localhost/Users/jonathan/Sites/webact2/js/webact.js</string>
+				<key>StateType</key>
+				<string>DefaultTab</string>
+			</dict>
+			<dict>
+				<key>StateType</key>
+				<string>PreviewTab</string>
 			</dict>
 		</array>
 	</dict>

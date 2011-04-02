@@ -8,4 +8,5 @@
  * @depends viewport.js
  * @depends tiled_image.js
  * @depends viewer.js
+ * @depends viewer_controls.js
  */

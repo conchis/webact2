@@ -4,3 +4,6 @@
 3. Add zoom / pan mode buttons to controls
 4. Option key should zoom out in zoom mode
 5. Tighten control box
+9. Improve tile loading on Firefox to avoid showing edges, icon before image is loaded
+10. Firefox: inhibit tile selection / highlight on drag
+

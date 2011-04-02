@@ -17,6 +17,7 @@
 <script type="text/javascript" src="../../js/viewport.js"></script>
 <script type="text/javascript" src="../../js/tiled_image.js"></script>
 <script type="text/javascript" src="../../js/viewer.js"></script>
+<script type="text/javascript" src="../../js/viewer_controls.js"></script>
 
 <link type="text/css" href="../../js/jquery-ui/css/smoothness/jquery-ui-1.8.11.custom.css" rel="stylesheet" />	
 
@@ -36,6 +37,7 @@
 
 $(document).ready(function () {
     eval(webact.imports("viewer"));
+    eval(webact.imports("viewer_controls"));
     
     var viewer = makeViewer({
         width: 512, height: 512, 
