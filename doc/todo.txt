@@ -1,5 +1,8 @@
-2. Adjust slider height depending on height of the thumbnail. 
-3. Improve tile loading on Firefox to avoid showing edges, icon before image is loaded
-4. Firefox: inhibit tile selection / highlight on drag
-5. Option key should zoom out in zoom mode
+1. Adjust slider height depending on height of the thumbnail. 
+2. Improves tile loading on Firefox to avoid showing edges, icon before image is loaded
+3. Firefox: inhibit tile selection / highlight on drag
+4. Option key should zoom out in zoom mode
+5. More contrasting color for control panel
+
+
 

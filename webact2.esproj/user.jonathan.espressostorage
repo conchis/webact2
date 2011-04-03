@@ -13,7 +13,7 @@
 		<key>StateType</key>
 		<string>ProjectWindow</string>
 		<key>TopLeftPoint</key>
-		<string>{134, 877}</string>
+		<string>{85, 878}</string>
 	</dict>
 	<key>com.macrabbit.Espresso.FileManager.DisclosureCollapsed</key>
 	<false/>
@@ -21,7 +21,7 @@
 	<dict>
 		<key>ExpandedURLs</key>
 		<array>
-			<string>file://localhost/Users/jonathan/Sites/webact2/js</string>
+			<string>file://localhost/Users/jonathan/Sites/webact2/doc</string>
 			<string>file://localhost/Users/jonathan/Sites/webact2/test/controls</string>
 		</array>
 	</dict>
@@ -33,37 +33,19 @@
 		<array>
 			<dict>
 				<key>DocumentURL</key>
-				<string>file://localhost/Users/jonathan/Sites/webact2/js/viewer.js</string>
-				<key>StateType</key>
-				<string>DefaultTab</string>
-			</dict>
-			<dict>
-				<key>DocumentURL</key>
-				<string>file://localhost/Users/jonathan/Sites/webact2/css/viewer.css</string>
-				<key>StateType</key>
-				<string>DefaultTab</string>
-			</dict>
-			<dict>
-				<key>DocumentURL</key>
 				<string>file://localhost/Users/jonathan/Sites/webact2/doc/todo.txt</string>
 				<key>StateType</key>
 				<string>DefaultTab</string>
 			</dict>
 			<dict>
 				<key>DocumentURL</key>
-				<string>file://localhost/Users/jonathan/Sites/webact2/js/viewer_controls.js</string>
+				<string>file://localhost/Users/jonathan/Sites/webact2/js/tiled_image.js</string>
 				<key>StateType</key>
 				<string>DefaultTab</string>
 			</dict>
 			<dict>
 				<key>DocumentURL</key>
 				<string>file://localhost/Users/jonathan/Sites/webact2/test/controls/viewer.html</string>
-				<key>StateType</key>
-				<string>DefaultTab</string>
-			</dict>
-			<dict>
-				<key>DocumentURL</key>
-				<string>file://localhost/Users/jonathan/Sites/webact2/js/webact.js</string>
 				<key>StateType</key>
 				<string>DefaultTab</string>
 			</dict>

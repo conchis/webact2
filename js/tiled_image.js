@@ -32,7 +32,15 @@ webact.in_package("tiled_image", function (tiled_image) {
     
     // Tile - Prototype Class
     
-    var tile = {layer: 0, column: 0, row: 0, tile_url: null, pyramid: null};
+    var tile = {
+        layer: 0, 
+        column: 0, 
+        row: 0, 
+        tile_url: null, 
+        pyramid: null, 
+        loaded: false,
+        shown: false
+    };
     
     var makeTile = function (image_url, layer, column, row, pyramid) {
         var tile_url = image_url + "/layer" + pad(layer, 4) +
@@ -54,28 +62,28 @@ webact.in_package("tiled_image", function (tiled_image) {
             draggable: false
         });
         container.append(element);
-        element.data(this);
         this.element = element;
+        element.load(this, function (event) {
+            var self = event.data;
+            self.loaded = true; 
+            if (self.shown) {
+                element.show();
+            }   
+        });
         element.hide();
-        this.update();
-    };
-    
-    tile.update = function () {
-        var element = this.element;
-        element.css("left", this.column * 256);
-        element.css("top", this.row * 256);
     };
     
     tile.draw = function (x, y, size) {
         var element = this.element;
-        element.css("left", x);
-        element.css("top",  y);
-        element.css("width", size);
-        element.css("height", size);    
-        this.element.show();
+        this.shown = true;
+        element.css({"left": x, "top":  y, "width": size, "height": size}); 
+        if (this.loaded) {
+            this.element.show();
+        }
     };
     
     tile.hide = function () {
+        this.shown = false;
         this.element.hide();
     };
     
@@ -145,7 +153,7 @@ webact.in_package("tiled_image", function (tiled_image) {
 		    var desired_scale = viewport.getScale();
             
             var origin = computeOrigin(view_rectangle);
-            var scaled_tile_size = pyramid.tile_size * (desired_scale / scale);	
+            var scaled_tile_size = Math.floor(pyramid.tile_size * (desired_scale / scale));	
             var offset = computeOffset(origin, view_rectangle, scaled_tile_size, desired_scale);
 	
             layer.hide();
