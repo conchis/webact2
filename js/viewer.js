@@ -78,21 +78,22 @@ webact.in_package("viewer", function (viewer) {
         
         self.getMode = function () { 
             return mode; 
-        }
+        };
         
         var setMode = function (new_mode) {
             if (new_mode === undefined) {
                 new_mode = (mode === SELECT_MODE) ? PAN_MODE : SELECT_MODE;
             }
-            if (new_mode === mode) return;
-            mode = new_mode;
-            if (mode === PAN_MODE) {
-                self.dom_element.css("cursor", "move");
-            }
-            else {
-                self.dom_element.css("cursor", "default");
-            }
-            self.broadcast("onModeChange", new_mode);         
+            if (new_mode !== mode) {
+                mode = new_mode;
+                if (mode === PAN_MODE) {
+                    self.dom_element.css("cursor", "move");
+                }
+                else {
+                    self.dom_element.css("cursor", "default");
+                }
+                self.broadcast("onModeChange", new_mode); 
+            }        
         };
         self.setMode = setMode;
         

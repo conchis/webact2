@@ -39,13 +39,19 @@
 			</dict>
 			<dict>
 				<key>DocumentURL</key>
-				<string>file://localhost/Users/jonathan/Sites/webact2/js/tiled_image.js</string>
+				<string>file://localhost/Users/jonathan/Sites/webact2/test/controls/viewer.html</string>
 				<key>StateType</key>
 				<string>DefaultTab</string>
 			</dict>
 			<dict>
 				<key>DocumentURL</key>
-				<string>file://localhost/Users/jonathan/Sites/webact2/test/controls/viewer.html</string>
+				<string>file://localhost/Users/jonathan/Sites/webact2/js/viewer.js</string>
+				<key>StateType</key>
+				<string>DefaultTab</string>
+			</dict>
+			<dict>
+				<key>DocumentURL</key>
+				<string>file://localhost/Users/jonathan/Sites/webact2/js/viewer_controls.js</string>
 				<key>StateType</key>
 				<string>DefaultTab</string>
 			</dict>

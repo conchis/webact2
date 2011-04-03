@@ -1,7 +1,7 @@
 /*jslint newcap: false, onevar: false, evil: true */
 /*global webact: true, jQuery: false, makeControl: false, 
     makePoint: false, makeRectangle: false, makeDimensions: false, loadPyramid: false,
-    makeViewport: false, makeTiledImage: false */
+    makeViewport: false, makeTiledImage: false, SELECT_MODE: false, PAN_MODE: false */
 
 /*
  * Copyright 2011 Jonathan A. Smith.
@@ -48,6 +48,8 @@ webact.in_package("viewer_controls", function (viewer_controls) {
             viewer.addListener("loaded", self);
         }; 
         
+        var onMouseMove;
+        
         var showPanel = function () {
             if (!is_shown) {
                 this.dom_element.css(position);
@@ -72,25 +74,21 @@ webact.in_package("viewer_controls", function (viewer_controls) {
             }
         };
         
-        var onMouseMove = function (event) {
+        var isMouseOver = function (event) {
+            var offset = self.dom_element.offset();          
+            var pageX = event.pageX;
+            var pageY = event.pageY;
+            return (pageX >= offset.left && pageX <= (offset.left + size.width) &&
+                    pageY >= offset.top  && pageY <= (offset.top + size.height));
+        };
+        
+        onMouseMove = function (event) {
             if (isMouseOver(event)) {
                 showPanel();
             }
             else {
                 hidePanel();
             }
-        };
-        
-        var isMouseOver = function (event) {
-            var offset = self.dom_element.offset();          
-            var pageX = event.pageX;
-            var pageY = event.pageY;
-            if (pageX >= offset.left && pageX <= (offset.left + size.width) &&
-                pageY >= offset.top  && pageY <= (offset.top + size.height)) {
-                return true;
-            }
-            else
-                return false;
         };
         
         self.generate = function (container) {
@@ -366,7 +364,7 @@ webact.in_package("viewer_controls", function (viewer_controls) {
             out_button.button({
                 icons: {primary: "ui-icon-minus"},
                 text: false,
-                label: "Zoom Out",
+                label: "Zoom Out"
             });
             out_button.click(zoomOut);
             
@@ -375,7 +373,7 @@ webact.in_package("viewer_controls", function (viewer_controls) {
             reset_button.button({
                 icons: {primary: "ui-icon-refresh"},
                 text: false,
-                label: "Reset",
+                label: "Reset"
             });
             reset_button.click(zoomReset); 
             
