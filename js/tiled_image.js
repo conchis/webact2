@@ -174,7 +174,7 @@ webact.in_package("tiled_image", function (tiled_image) {
         
         layer.refresh = function () {           
             var view_rectangle = viewport.getView().bounds();
-    	    var desired_scale = viewport.getScale();
+            var desired_scale = viewport.getScale();
             
             var origin = computeOrigin(view_rectangle);
             var scaled_tile_size = pyramid.tile_size * (desired_scale / scale);	
@@ -283,7 +283,7 @@ webact.in_package("tiled_image", function (tiled_image) {
         
         self.refreshed = function () {
             refresh();
-        }
+        };
 
         self.toString = function () {
             return "TiledImage(width=" + self.width +

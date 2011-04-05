@@ -27,6 +27,7 @@ webact.in_package("viewer_controls", function (viewer_controls) {
     eval(webact.imports("controls"));
     eval(webact.imports("viewer"));
     
+    // Forward declarations
     var makeNavigator, makeZoomSlider, makeViewerButtons; 
         
     viewer_controls.makeViewerControls = function (viewer) {
@@ -187,7 +188,7 @@ webact.in_package("viewer_controls", function (viewer_controls) {
             height = Math.round(scene_size.height * scale);
             viewport.addListener("changed", navigator);
             viewport.addListener("zoomed", navigator, "changed");
-            
+            viewport.addListener("refreshed", navigator, "changed");  
         };
         
         var track = function (event) {
@@ -208,12 +209,17 @@ webact.in_package("viewer_controls", function (viewer_controls) {
             left = offset.left;
             top = offset.top;
             is_tracking = true;
-            track(event);
+            
+            var center = makePoint(
+                Math.round((event.pageX - left) / scale), 
+                Math.round((event.pageY - top) / scale));
+            viewport.startCenter(center);
         };
         
         var stopTracking = function (event) {
             event.stopPropagation();
             is_tracking = false;
+            viewport.endCenter();
         };
 
         var attachEvents = function (dom_element) {

@@ -27,7 +27,8 @@ webact.in_package("viewer", function (viewer) {
     eval(webact.imports("tiled_image"));
     eval(webact.imports("controls"));
     
-    var makeSelector, makeNavigator, makeZoomSlider, makeViewerButtons; 
+    // Forward Declaration
+    var makeSelector; 
     
     // Constants for viewer mode
     var SELECT_MODE = 0;

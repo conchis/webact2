@@ -75,6 +75,9 @@ webact.in_package("viewport", function (viewport) {
         // Point start of pan in view coordinates
         var pan_start = null;
         
+        // Saved point while centering
+        var center_start = null;
+        
         // Animator animates zoom and center changes over time
         var animator = makeZoomAnimator(self);
         
@@ -173,17 +176,6 @@ webact.in_package("viewport", function (viewport) {
                 update();
                 this.broadcast("changed");
             }
-        };
-        
-        // ** View
-        
-        self.centerOn = function (scene_center) {
-            if (center.equals(scene_center)) {
-                return;
-            }
-            center = scene_center.pinInRectangle(limits);
-            update();
-            self.broadcast("changed");    
         };
         
         // ** Zoom
@@ -285,6 +277,27 @@ webact.in_package("viewport", function (viewport) {
             update();
             self.broadcast("changed");
         };
+        
+        // ** Centering
+        
+        self.startCenter = function (scene_center) {
+            center_start = scene_center;
+            self.centerOn(scene_center);
+        };
+        
+        self.centerOn = function (scene_center) {
+            if (center.equals(scene_center)) {
+                return;
+            }
+            center = scene_center.pinInRectangle(limits);
+            update();
+            self.broadcast("refreshed");    
+        };  
+        
+        self.endCenter = function () {
+            center_start = null;
+            self.broadcast("changed");
+        };     
         
         // ** String Representation
         
