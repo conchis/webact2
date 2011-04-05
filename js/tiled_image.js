@@ -144,7 +144,7 @@ webact.in_package("tiled_image", function (tiled_image) {
             
             var x = Math.round((col - origin.x) * size + offset.x);
             var y = Math.round((row - origin.y) * size + offset.y);
-            tile.draw(x, y, size);
+            tile.draw(x, y, Math.floor(size));
             shown.push(tile);
         };
                 
@@ -153,7 +153,7 @@ webact.in_package("tiled_image", function (tiled_image) {
 		    var desired_scale = viewport.getScale();
             
             var origin = computeOrigin(view_rectangle);
-            var scaled_tile_size = Math.floor(pyramid.tile_size * (desired_scale / scale));	
+            var scaled_tile_size = pyramid.tile_size * (desired_scale / scale);	
             var offset = computeOffset(origin, view_rectangle, scaled_tile_size, desired_scale);
 	
             layer.hide();
