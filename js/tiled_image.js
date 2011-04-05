@@ -161,6 +161,30 @@ webact.in_package("tiled_image", function (tiled_image) {
                 drawTile(col, row, origin, scaled_tile_size, offset);
             });
         };
+        
+        var refreshTile = function (col, row, origin, size, offset) {
+            var tile = tiles[row][col];
+            if (tile !== null) {
+                var x = Math.round((col - origin.x) * size + offset.x);
+                var y = Math.round((row - origin.y) * size + offset.y);
+                tile.draw(x, y, Math.floor(size));
+                shown.push(tile);
+            }
+        };
+        
+        layer.refresh = function () {           
+            var view_rectangle = viewport.getView().bounds();
+    	    var desired_scale = viewport.getScale();
+            
+            var origin = computeOrigin(view_rectangle);
+            var scaled_tile_size = pyramid.tile_size * (desired_scale / scale);	
+            var offset = computeOffset(origin, view_rectangle, scaled_tile_size, desired_scale);
+    
+            layer.hide();
+            pyramid.forTiles(view_rectangle, layer_number, function (col, row) {
+                refreshTile(col, row, origin, scaled_tile_size, offset);
+            });
+        };
        
         layer.hide = function () {
             for (var index = 0; index < shown.length; index += 1) {
@@ -196,6 +220,7 @@ webact.in_package("tiled_image", function (tiled_image) {
         var initialize = function () {
             viewport.addListener("changed", self);
             viewport.addListener("zoomed", self, "changed");
+            viewport.addListener("refreshed", self);
         };
         
         var createLayers = function () {
@@ -223,6 +248,20 @@ webact.in_package("tiled_image", function (tiled_image) {
             }
         };
         
+        var refresh = function () {
+            var layer_number = pyramid.layerForScale(viewport.getScale());
+            var layer_count = pyramid.layers();
+            for (var index = 0; index < layer_count; index += 1) {
+                var layer = layers[index];
+                if (index <= layer_number) {
+                    layer.refresh();
+                }
+                else {
+                    layer.hide();
+                }
+            }
+        };
+        
         var generate = function (container) {
             element = jQuery("<div/>", {
                 style: "position:relative;width:700px;height:660px;overflow:hidden;"
@@ -241,6 +280,10 @@ webact.in_package("tiled_image", function (tiled_image) {
         self.changed = function () {
             draw();
         };
+        
+        self.refreshed = function () {
+            refresh();
+        }
 
         self.toString = function () {
             return "TiledImage(width=" + self.width +

@@ -32,6 +32,12 @@
 		<array>
 			<dict>
 				<key>DocumentURL</key>
+				<string>file://localhost/Users/jonathan/Sites/webact2/js/viewport.js</string>
+				<key>StateType</key>
+				<string>DefaultTab</string>
+			</dict>
+			<dict>
+				<key>DocumentURL</key>
 				<string>file://localhost/Users/jonathan/Sites/webact2/test/controls/viewer.html</string>
 				<key>StateType</key>
 				<string>DefaultTab</string>
@@ -49,16 +55,6 @@
 				<string>file://localhost/Users/jonathan/Sites/webact2/js/tiled_image.js</string>
 				<key>StateType</key>
 				<string>DefaultTab</string>
-			</dict>
-			<dict>
-				<key>DocumentURL</key>
-				<string>file://localhost/Users/jonathan/Sites/webact2/test/controls/viewer_min.html</string>
-				<key>StateType</key>
-				<string>DefaultTab</string>
-			</dict>
-			<dict>
-				<key>StateType</key>
-				<string>PreviewTab</string>
 			</dict>
 		</array>
 	</dict>

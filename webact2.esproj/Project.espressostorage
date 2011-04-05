@@ -6,11 +6,11 @@
 	<array>
 		<dict>
 			<key>ESPublishServerStateAskForPasswordWhenConnectingKey</key>
-			<true/>
+			<false/>
 			<key>ESPublishServerStateDeriveServerTimeOffsetAutomaticallyKey</key>
 			<true/>
 			<key>ESPublishServerStateHostKey</key>
-			<string>sauer.at.northwestern.edu</string>
+			<string>conchis.org</string>
 			<key>ESPublishServerStateMaximumAllowedConnectionsKey</key>
 			<integer>16</integer>
 			<key>ESPublishServerStateMinimumUpdateTimeDifferenceKey</key>
@@ -18,14 +18,14 @@
 			<key>ESPublishServerStateModeKey</key>
 			<integer>0</integer>
 			<key>ESPublishServerStateNameKey</key>
-			<string>sauer.at.northwestern.edu</string>
+			<string>conchis.org</string>
 			<key>ESPublishServerStateOptionsKey</key>
 			<dict>
 				<key>FSFTPTransferModeOptionKey</key>
 				<string>FSFTPAutomaticTransferMode</string>
 			</dict>
 			<key>ESPublishServerStatePathKey</key>
-			<string>/srv/www/htdocs/webact2</string>
+			<string>/var/www/webact2</string>
 			<key>ESPublishServerStatePortKey</key>
 			<integer>22</integer>
 			<key>ESPublishServerStateServerTimeOffsetKey</key>

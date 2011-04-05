@@ -226,7 +226,6 @@ webact.in_package("viewport", function (viewport) {
                 return;
             }
             animator.zoomTo(new_scale, center);
-            //self.setScale(new_scale);
         };
         
         self.zoomReset = function () {
@@ -271,12 +270,13 @@ webact.in_package("viewport", function (viewport) {
             center = center.pinInRectangle(limits);
             
             update();
-            self.broadcast("changed");
+            self.broadcast("refreshed");
         };
         
         self.endPan = function () {
             pan_center = null;
             pan_start = null;
+            self.broadcast("changed");
         };
         
         self.cancelPan = function () {
@@ -333,7 +333,7 @@ webact.in_package("viewport", function (viewport) {
             );
             
             viewport.updateView(new_scale, new_center);
-            viewport.broadcast("zoomed"); 
+            viewport.broadcast("refreshed"); 
         };
 
         var step = function () {
