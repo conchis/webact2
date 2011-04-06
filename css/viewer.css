@@ -26,8 +26,8 @@
     width: 200px;
     height: 205px;
     margin: 0;
-    background-image: url(../images/semidark.png);
     border: 1px solid #888;
+	background: url(../images/semidark.png) repeat;
 }
 
 .wa_image_icon {

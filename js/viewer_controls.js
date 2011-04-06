@@ -113,7 +113,7 @@ webact.in_package("viewer_controls", function (viewer_controls) {
             var navigator = makeNavigator(viewport, image_url);
             navigator.create(panel);
             
-            var slider = makeZoomSlider(viewport);
+            var slider = makeZoomSlider(viewport, size.height - 154);
             slider.create(panel);
             
             var buttons = makeViewerButtons(viewer);
@@ -130,7 +130,6 @@ webact.in_package("viewer_controls", function (viewer_controls) {
                 "class": "wa_image_icon"
             });
             dom_element.append(icon);
-            //icon.css({left: size.width - width - 5, top: size.height - height - 5});
             icon.css({left: 0, top: 0});
             
             var shadow = jQuery("<img/>", {
@@ -146,6 +145,18 @@ webact.in_package("viewer_controls", function (viewer_controls) {
             image.css("width", width);
             icon.append(image);
         };
+        
+        var positionControls = function (size) {
+            // Position controls over lower right con
+            var viewer_element  = viewer.dom_element;
+            var viewer_position = viewer_element.offset();
+            var viewer_width    = viewer_element.width();
+            var viewer_height   = viewer_element.height();
+            position = {
+                left: viewer_position.left + viewer_width  - size.width - 10,
+                top:  viewer_position.top  + viewer_height - size.height - 10
+            };
+        };
 
         self.loaded = function () {
             var dom_element = self.dom_element;
@@ -153,11 +164,12 @@ webact.in_package("viewer_controls", function (viewer_controls) {
             image_url = viewer.getImageURL();
             
             var scene_size = viewport.getSceneSize();
-            size = makeDimensions(187, scene_size.height * (150 / scene_size.width) + 20);
+            var height = Math.max(scene_size.height * (150 / scene_size.width) + 20, 200);
+            size = makeDimensions(187, height);
             dom_element.css({width: size.width, height: size.height});
             
-            position = dom_element.offset();
-            
+            positionControls(size);
+
             generateIcon(dom_element);
             generatePanel(dom_element);
             hidePanel();
@@ -272,7 +284,7 @@ webact.in_package("viewer_controls", function (viewer_controls) {
     };
     viewer_controls.makeNavigator = makeNavigator;
     
-    makeZoomSlider = function (viewport) {
+    makeZoomSlider = function (viewport, slider_height) {
         var slider = makeControl({});
         
         var initialize = function () {
@@ -293,6 +305,7 @@ webact.in_package("viewer_controls", function (viewer_controls) {
                 orientation: 'vertical',
                 slide: adjustZoom
             });
+            dom_element.css("height", slider_height);
             
             return dom_element;
         };
