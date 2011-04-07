@@ -7,22 +7,20 @@
 	<key>ESProjectWindowState</key>
 	<dict>
 		<key>ContentSize</key>
-		<string>{1192, 955}</string>
+		<string>{1032, 764}</string>
 		<key>ProjectURL</key>
 		<string>file://localhost/Users/jonathan/Sites/webact2/webact2.esproj/</string>
 		<key>StateType</key>
 		<string>ProjectWindow</string>
 		<key>TopLeftPoint</key>
-		<string>{35, 1077}</string>
+		<string>{50, 878}</string>
 	</dict>
 	<key>com.macrabbit.Espresso.FileManager.DisclosureCollapsed</key>
 	<false/>
 	<key>com.macrabbit.Espresso.FileManager.FileControllerState</key>
 	<dict>
 		<key>ExpandedURLs</key>
-		<array>
-			<string>file://localhost/Users/jonathan/Sites/webact2/test/controls</string>
-		</array>
+		<array/>
 	</dict>
 	<key>com.macrabbit.Espresso.Publisher.DisclosureCollapsed</key>
 	<false/>
@@ -31,58 +29,30 @@
 		<key>Tabs</key>
 		<array>
 			<dict>
+				<key>DocumentURL</key>
+				<string>file://localhost/Users/jonathan/Sites/webact2/js/viewer.js</string>
 				<key>StateType</key>
-				<string>PreviewTab</string>
-				<key>Title</key>
-				<string>Test Viewer 3a</string>
-				<key>URL</key>
-				<string>file:///Users/jonathan/Sites/webact2/test/controls/viewer3a.html</string>
+				<string>DefaultTab</string>
 			</dict>
 			<dict>
 				<key>StateType</key>
 				<string>PreviewTab</string>
 				<key>Title</key>
-				<string>Test Viewer 3a</string>
+				<string>Test Viewer</string>
 				<key>URL</key>
-				<string>file:///Users/jonathan/Sites/webact2/test/controls/viewer3b.html</string>
+				<string>file:///Users/jonathan/Sites/webact2/test/controls/viewer.html</string>
 			</dict>
 			<dict>
+				<key>DocumentURL</key>
+				<string>file://localhost/Users/jonathan/Sites/webact2/js/controls.js</string>
 				<key>StateType</key>
-				<string>PreviewTab</string>
-				<key>Title</key>
-				<string>Test Viewer 3c</string>
-				<key>URL</key>
-				<string>file:///Users/jonathan/Sites/webact2/test/controls/viewer3c.html</string>
-			</dict>
-			<dict>
-				<key>StateType</key>
-				<string>PreviewTab</string>
-				<key>Title</key>
-				<string>Test Viewer 3a</string>
-				<key>URL</key>
-				<string>file:///Users/jonathan/Sites/webact2/test/controls/viewer3d.html</string>
+				<string>DefaultTab</string>
 			</dict>
 			<dict>
 				<key>DocumentURL</key>
 				<string>file://localhost/Users/jonathan/Sites/webact2/js/viewer_controls.js</string>
 				<key>StateType</key>
 				<string>DefaultTab</string>
-			</dict>
-			<dict>
-				<key>DocumentURL</key>
-				<string>file://localhost/Users/jonathan/Sites/webact2/test/controls/viewer3c.html</string>
-				<key>StateType</key>
-				<string>DefaultTab</string>
-			</dict>
-			<dict>
-				<key>DocumentURL</key>
-				<string>file://localhost/Users/jonathan/Sites/webact2/test/controls/viewer.html</string>
-				<key>StateType</key>
-				<string>DefaultTab</string>
-			</dict>
-			<dict>
-				<key>StateType</key>
-				<string>PreviewTab</string>
 			</dict>
 		</array>
 	</dict>

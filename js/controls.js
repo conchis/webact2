@@ -210,6 +210,31 @@ webact.in_package("controls", function (controls) {
 		
 		};
 		
+		// *** Testing
+		
+		/*
+		    Function: isOver
+		    
+		    Determines if a point (in global coordinates) is over
+		    the control.
+		    
+		    Parameters:
+		       x - x coordinate of point to test
+		       y - y coordinate of point to test
+		       
+		    Returns:
+		        true if point is within control's DOM element,
+		        false otherwise.
+		*/
+		
+		self.isOver = function (x, y) {
+            var dom_element = self.dom_element;
+            var offset = dom_element.offset();
+            var right = offset.left + dom_element.width();
+            var bottom = offset.top + dom_element.height();
+            return x >= offset.left && x < right && y >= offset.top && y < bottom;
+		};
+		
 		// *** Visibility
 		
 		// Hide this control's element if any

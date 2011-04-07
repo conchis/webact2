@@ -49,7 +49,7 @@ webact.in_package("viewer_controls", function (viewer_controls) {
             viewer.addListener("loaded", self);
         }; 
         
-        var onMouseMove;
+        var onMouseMove; // Forward declairaton
         
         var showPanel = function () {
             if (!is_shown) {
@@ -57,6 +57,7 @@ webact.in_package("viewer_controls", function (viewer_controls) {
                 icon.hide();
                 panel.show();
                 jQuery("body").bind("mousemove", onMouseMove);
+                jQuery("body").bind("mouseout", onMouseMove);
                 is_shown = true;
             }
         };
@@ -71,6 +72,7 @@ webact.in_package("viewer_controls", function (viewer_controls) {
                 icon.show();
                 panel.hide();
                 jQuery("body").unbind("mousemove", onMouseMove);
+                jQuery("body").unbind("mouseout", onMouseMove);
                 is_shown = false;
             }
         };
@@ -203,10 +205,7 @@ webact.in_package("viewer_controls", function (viewer_controls) {
             viewport.addListener("refreshed", navigator, "changed");  
         };
         
-        var track = function (event) {
-            if (!is_tracking) {
-                return;
-            }
+        var onMouseMove = function (event) {
             event.stopPropagation();
             var center = makePoint(
                 Math.round((event.pageX - left) / scale), 
@@ -214,30 +213,43 @@ webact.in_package("viewer_controls", function (viewer_controls) {
             viewport.centerOn(center);
         };
         
-        var startTracking = function (event) {
+        var onMouseDown = function (event) {
             event.preventDefault(true);
             event.stopPropagation();
-            var offset = navigator.dom_element.offset();
+            
+            // Add event bindings
+            var dom_element = navigator.dom_element;
+            dom_element.bind("mousemove", onMouseMove);
+            dom_element.bind("mouseup", onMouseUp);
+            jQuery("body").bind("mouseout", onMouseOut);
+            
+            // Initialize drag
+            var offset = dom_element.offset();
             left = offset.left;
             top = offset.top;
-            is_tracking = true;
-            
             var center = makePoint(
                 Math.round((event.pageX - left) / scale), 
                 Math.round((event.pageY - top) / scale));
             viewport.startCenter(center);
         };
         
-        var stopTracking = function (event) {
+        var onMouseUp = function (event) {
             event.stopPropagation();
-            is_tracking = false;
+            
+            // Signal panning stopped
             viewport.endCenter();
+            
+            // Remove event bindings
+            var dom_element = navigator.dom_element;
+            dom_element.unbind("mousemove", onMouseMove);
+            dom_element.unbind("mouseup", onMouseUp);
+            jQuery("body").unbind("mouseout", onMouseOut);
         };
-
-        var attachEvents = function (dom_element) {
-            dom_element.mousedown(startTracking);    
-            dom_element.mousemove(track); 
-            dom_element.mouseup(stopTracking);
+        
+        onMouseOut = function (event) {
+            if (!navigator.isOver(event.pageX, event.pageY)) {
+                onMouseUp(event);    
+            }
         };
         
         navigator.generate = function (container) {
@@ -262,7 +274,7 @@ webact.in_package("viewer_controls", function (viewer_controls) {
             });
             dom_element.append(indicator);
             
-            attachEvents(dom_element);          
+            dom_element.bind("mousedown", onMouseDown);         
             return dom_element;
         };
                 

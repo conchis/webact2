@@ -16,7 +16,7 @@
 			<key>ESPublishServerStateMinimumUpdateTimeDifferenceKey</key>
 			<real>60</real>
 			<key>ESPublishServerStateModeKey</key>
-			<integer>0</integer>
+			<integer>3</integer>
 			<key>ESPublishServerStateNameKey</key>
 			<string>conchis.org</string>
 			<key>ESPublishServerStateOptionsKey</key>
@@ -28,6 +28,22 @@
 			<string>/var/www/webact2</string>
 			<key>ESPublishServerStatePortKey</key>
 			<integer>22</integer>
+			<key>ESPublishServerStateSavedMergeOperationMasksKey</key>
+			<dict>
+				<key>sftp://jonathan@conchis.org:22</key>
+				<dict>
+					<key>/var/www/webact2/test/controls/viewer2.html</key>
+					<integer>1073741824</integer>
+					<key>/var/www/webact2/test/controls/viewer3a.html</key>
+					<integer>1073741824</integer>
+					<key>/var/www/webact2/test/controls/viewer3b.html</key>
+					<integer>1073741824</integer>
+					<key>/var/www/webact2/test/controls/viewer3c.html</key>
+					<integer>1073741824</integer>
+					<key>/var/www/webact2/test/controls/viewer3d.html</key>
+					<integer>1073741824</integer>
+				</dict>
+			</dict>
 			<key>ESPublishServerStateServerTimeOffsetKey</key>
 			<real>-3600</real>
 			<key>ESPublishServerStateTypeKey</key>
