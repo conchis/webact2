@@ -213,25 +213,7 @@ webact.in_package("viewer_controls", function (viewer_controls) {
             viewport.centerOn(center);
         };
         
-        var onMouseDown = function (event) {
-            event.preventDefault(true);
-            event.stopPropagation();
-            
-            // Add event bindings
-            var dom_element = navigator.dom_element;
-            dom_element.bind("mousemove", onMouseMove);
-            dom_element.bind("mouseup", onMouseUp);
-            jQuery("body").bind("mouseout", onMouseOut);
-            
-            // Initialize drag
-            var offset = dom_element.offset();
-            left = offset.left;
-            top = offset.top;
-            var center = makePoint(
-                Math.round((event.pageX - left) / scale), 
-                Math.round((event.pageY - top) / scale));
-            viewport.startCenter(center);
-        };
+        var onMouseOut; // Forward Declatation
         
         var onMouseUp = function (event) {
             event.stopPropagation();
@@ -250,6 +232,26 @@ webact.in_package("viewer_controls", function (viewer_controls) {
             if (!navigator.isOver(event.pageX, event.pageY)) {
                 onMouseUp(event);    
             }
+        };
+        
+        var onMouseDown = function (event) {
+            event.preventDefault(true);
+            event.stopPropagation();
+            
+            // Add event bindings
+            var dom_element = navigator.dom_element;
+            dom_element.bind("mousemove", onMouseMove);
+            dom_element.bind("mouseup", onMouseUp);
+            jQuery("body").bind("mouseout", onMouseOut);
+            
+            // Initialize drag
+            var offset = dom_element.offset();
+            left = offset.left;
+            top = offset.top;
+            var center = makePoint(
+                Math.round((event.pageX - left) / scale), 
+                Math.round((event.pageY - top) / scale));
+            viewport.startCenter(center);
         };
         
         navigator.generate = function (container) {
