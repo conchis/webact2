@@ -69,6 +69,15 @@ webact.in_package("controls", function (controls) {
 		// Array of nested controls (if any)
 		self.contents = null;
 		
+		// Function called while tracking when move
+		var mouse_move_function = null;
+		
+		// Function called when the mouse is released over the component
+		var mouse_up_function = null;
+		
+		// Function called when tracking is ended
+		var mouse_out_function = null;
+		
 		// *** Id Generation
 
 		// Returns an id for this control, often used to
@@ -210,7 +219,7 @@ webact.in_package("controls", function (controls) {
 		
 		};
 		
-		// *** Testing
+		// *** Mouse Tracking and Testing
 		
 		/*
 		    Function: isOver
@@ -235,6 +244,116 @@ webact.in_package("controls", function (controls) {
             return x >= offset.left && x < right && y >= offset.top && y < bottom;
 		};
 		
+		/*
+		    Function: trackMouseMove
+		    
+		    Called when the mouse moves over the component. If set, calls the mouse
+		    move function.
+		    
+		    Parameters:
+		        event - jQuery event object
+		*/
+		
+        var trackMouseMove = function (event) {
+            if (mouse_move_function) {
+                mouse_move_function(event);
+            }
+        };
+        
+        /*
+            Function: trackMouseUp
+            
+            Called when mouse button is released over the component while tracking. 
+            Stops mouse tracking. If set, the mouse up function is called with the
+            jQuery event.
+            
+            Parameters:
+                event - jQuery event object
+        */
+        
+        var trackMouseUp = function (event) {
+            var up_function = mouse_up_function;
+            self.stopTracking();
+            if (up_function) {
+                up_function(event);
+            }
+        };
+        
+        /*
+            Function: trackMouseOut
+            
+            Handles mouse out events while tracking. If this event occurs while the
+            mouse is outside the component view, stops tracking.
+            
+            Parameters:
+                event - jQuery event object
+        */
+        
+        var trackMouseOut = function (event) {
+            if (!self.isOver(event.pageX, event.pageY)) { 
+                var out_function = mouse_out_function;
+                self.stopTracking(); 
+                if (out_function) {
+                    out_function(event);
+                }
+            }
+        };
+        
+        /*
+            Function: ignoreEvent
+            
+            Function used as event callback to ignore events.
+            Thanks Rodolfo for this fix!
+            
+            Parameters:
+                event - jQuery event object
+        */
+        
+        var ignoreEvent = function (event) {
+            return false;
+        };
+        
+        /*
+            Function: startTracking
+            
+            Binds events needed to track the mouse while over this view. The 
+            component will call a specified move function while the mouse is 
+            over the view, and a specified up function if the mouse is 
+            release over the view.
+            
+            Parameters:
+                move_function - function called when mouse moves while tracking
+                up_function   - function called when mouse is released over view
+        */
+		
+		self.startTracking = function (move_function, up_function, out_function) {
+		    mouse_move_function = move_function;
+		    mouse_up_function = up_function;
+		    mouse_out_function = out_function;
+		
+		    self.dom_element.bind("mousemove", trackMouseMove);	
+		    self.dom_element.bind("mouseup", trackMouseUp);    
+		    var body = jQuery("body");
+		    body.bind("mouseout", trackMouseOut); 
+		    body.bind("mousedown", ignoreEvent);  
+		};
+		
+        /*
+            Function: stopTracking
+            
+            Stops mouse tracking. Unbinds all events set while tracking.
+        */
+		
+		self.stopTracking = function () {
+            self.dom_element.unbind("mousemove", trackMouseMove);	
+            self.dom_element.unbind("mouseup", trackMouseUp);       
+            var body = jQuery("body");
+            body.unbind("mouseout", trackMouseOut); 
+            body.unbind("mousedown", ignoreEvent); 
+		    mouse_move_function = null;
+		    mouse_out_function = null;
+		};
+
 		// *** Visibility
 		
 		// Hide this control's element if any

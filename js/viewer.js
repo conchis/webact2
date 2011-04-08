@@ -104,20 +104,14 @@ webact.in_package("viewer", function (viewer) {
             setMode(mode);
         };
         
-        var onPanOut; // Forward declaration
-        
         var onPanEnd = function (event) {
             var element = self.dom_element;
             viewport.endPan();
-            
-            element.unbind("mousemove", onPan);
-            element.unbind("mouseout", onPanOut);
-            jQuery("body").unbind("mouseup", onPanEnd);
         };
         
-        onPanOut = function (event) {
+        var onPanOut = function (event) {
             if (!self.isOver(event.pageX, event.pageY)) {
-                onPanEnd();
+                viewport.endPan();
             }
         };
         
@@ -127,9 +121,7 @@ webact.in_package("viewer", function (viewer) {
             
             if (mode === PAN_MODE) {
                 viewport.startPan(mouse_point);  
-                element.bind("mousemove", onPan);
-                element.bind("mouseout", onPanOut);
-                jQuery("body").bind("mouseup", onPanEnd);
+                self.startTracking(onPan, onPanEnd, onPanOut);
             }
             else if (mode === SELECT_MODE) {
                 selector.select(mouse_point, event);
@@ -217,13 +209,8 @@ webact.in_package("viewer", function (viewer) {
                 height: Math.abs(event.pageY - start.y)
             });     
         };
-        
-        var onMouseOut; // Forward declaration
-        
+                
         var onMouseUp = function (event) {
-            viewer.dom_element.unbind("mousemove", onMouseMove);
-            viewer.dom_element.unbind("mouseout", onMouseOut);    
-            jQuery("body").unbind("mouseup", onMouseUp);  
             self.hide();
             
             var zoom_box = makeRectangle(
@@ -235,13 +222,8 @@ webact.in_package("viewer", function (viewer) {
             viewport.zoomBox(zoom_box);
         };
         
-        onMouseOut = function (event) {
-            if (!viewer.isOver(event.pageX, event.pageY)) {
-                viewer.dom_element.unbind("mousemove", onMouseMove);
-                viewer.dom_element.unbind("mouseout", onMouseOut);    
-                jQuery("body").unbind("mouseup", onMouseUp);
-                self.hide();
-            }
+        var onMouseOut = function (event) {
+            self.hide();
         };
         
         self.select = function (start_point) {
@@ -254,9 +236,7 @@ webact.in_package("viewer", function (viewer) {
             element.css("height", 0); 
             self.show();
             
-            viewer.dom_element.bind("mousemove", onMouseMove);
-            viewer.dom_element.bind("mouseout", onMouseOut);
-            jQuery("body").bind("mouseup", onMouseUp);           
+            viewer.startTracking(onMouseMove, onMouseUp, onMouseOut);           
         };
         
         return self;

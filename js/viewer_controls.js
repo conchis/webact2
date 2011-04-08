@@ -56,8 +56,9 @@ webact.in_package("viewer_controls", function (viewer_controls) {
                 this.dom_element.css(position);
                 icon.hide();
                 panel.show();
-                jQuery("body").bind("mousemove", onMouseMove);
-                jQuery("body").bind("mouseout", onMouseMove);
+                var body = jQuery("body");
+                body.bind("mousemove", onMouseMove);
+                body.bind("mouseout", onMouseMove);
                 is_shown = true;
             }
         };
@@ -71,8 +72,9 @@ webact.in_package("viewer_controls", function (viewer_controls) {
                 });
                 icon.show();
                 panel.hide();
-                jQuery("body").unbind("mousemove", onMouseMove);
-                jQuery("body").unbind("mouseout", onMouseMove);
+                var body = jQuery("body");
+                body.unbind("mousemove", onMouseMove);
+                body.unbind("mouseout", onMouseMove);
                 is_shown = false;
             }
         };
@@ -212,46 +214,29 @@ webact.in_package("viewer_controls", function (viewer_controls) {
                 Math.round((event.pageY - top) / scale));
             viewport.centerOn(center);
         };
-        
-        var onMouseOut; // Forward Declatation
-        
+                
         var onMouseUp = function (event) {
             event.stopPropagation();
             
             // Signal panning stopped
             viewport.endCenter();
-            
-            // Remove event bindings
-            var dom_element = navigator.dom_element;
-            dom_element.unbind("mousemove", onMouseMove);
-            dom_element.unbind("mouseup", onMouseUp);
-            jQuery("body").unbind("mouseout", onMouseOut);
-        };
-        
-        onMouseOut = function (event) {
-            if (!navigator.isOver(event.pageX, event.pageY)) {
-                onMouseUp(event);    
-            }
         };
         
         var onMouseDown = function (event) {
             event.preventDefault(true);
             event.stopPropagation();
             
-            // Add event bindings
-            var dom_element = navigator.dom_element;
-            dom_element.bind("mousemove", onMouseMove);
-            dom_element.bind("mouseup", onMouseUp);
-            jQuery("body").bind("mouseout", onMouseOut);
-            
             // Initialize drag
-            var offset = dom_element.offset();
+            var offset = navigator.dom_element.offset();
             left = offset.left;
             top = offset.top;
             var center = makePoint(
                 Math.round((event.pageX - left) / scale), 
                 Math.round((event.pageY - top) / scale));
             viewport.startCenter(center);
+            
+            // Start tracking mouse
+            navigator.startTracking(onMouseMove, onMouseUp, onMouseUp);
         };
         
         navigator.generate = function (container) {
