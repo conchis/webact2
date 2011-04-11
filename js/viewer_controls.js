@@ -137,7 +137,7 @@ webact.in_package("viewer_controls", function (viewer_controls) {
             icon.css({left: 0, top: 0});
             
             var shadow = jQuery("<img/>", {
-                "src": "../../images/semishadow.png"
+                "class": "wa_image_shadow"
             });
             shadow.css({left: 5, top: 5, width: width, height: height});
             icon.append(shadow);

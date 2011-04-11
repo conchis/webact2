@@ -30,6 +30,10 @@
 	background: url(../images/semidark.png) repeat;
 }
 
+.wa_image_shadow {
+	background: url(../images/semishadow.png) repeat;    
+}
+
 .wa_image_icon {
     position: absolute;
 }
