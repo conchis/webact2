@@ -11,10 +11,8 @@ jQuery 1.5.1 and jQueryUI.
 1. See the 'tiler' directory for software used to tile images for viewing.
 2. Source code documentation is in doc/html. This is not yet complete.
 
-Test version of image viewer is at:
-    [http://conchis.org/webact2](http://conchis.org/webact2)
+Test version of image viewer: [http://conchis.org/webact2](http://conchis.org/webact2)
 
-Not yet complete source documentation is at:
-    [http://conchis.org/webact2/doc/html](http://conchis.org/webact2/doc/html)
+Not yet complete source documentation: [http://conchis.org/webact2/doc/html](http://conchis.org/webact2/doc/html)
 
 
