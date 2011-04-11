@@ -48,8 +48,6 @@ Format: 1.51
 
 File: controls.js  (controls.js)
 File: geometry.js  (geometry.js)
-File: jquery-ui/development-bundle/jquery-1.4.2.js  (jquery-ui/development-bundle/jquery-1.4.2.js)
-File: jquery-ui/development-bundle/jquery-1.5.1.js  (jquery-ui/development-bundle/jquery-1.5.1.js)
 File: observers.js  (observers.js)
 File: packages.js  (packages.js)
 File: paths.js  (paths.js)
@@ -62,6 +60,5 @@ Group: Index  {
    Class Index: Classes
    File Index: Files
    Function Index: Functions
-   Variable Index: Variables
    }  # Group: Index
 

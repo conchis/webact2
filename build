@@ -1,0 +1,10 @@
+# Build process requires:
+#
+#  Juicer              (http://cjohansen.no/en/ruby/juicer_a_css_and_javascript_packaging_tool)
+#    YUICompressor
+#    JSLint
+#  NaturalDocs         (http://www.naturaldocs.org)
+
+juicer merge --force css/webact.css
+juicer merge --force js/webact.js 
+NaturalDocs -i js -o HTML doc/html -p doc/project
