@@ -5,7 +5,7 @@ of web-based environments for research and learning.
 
 ## Image Viewer
 
-Alpha release of the JavaScript zooming viewer for high resolution images. The image viewer depends only on 
+Beta release of the JavaScript zooming viewer for high resolution images. The image viewer depends only on 
 jQuery 1.5.1 and jQueryUI.
 
 1. See the 'tiler' directory for software used to tile images for viewing.
@@ -13,6 +13,6 @@ jQuery 1.5.1 and jQueryUI.
 
 Test version of image viewer: [http://conchis.org/webact2](http://conchis.org/webact2)
 
-Not yet complete source documentation: [http://conchis.org/webact2/doc/html](http://conchis.org/webact2/doc/html)
+Not (yet) complete source documentation: [http://conchis.org/webact2/doc/html](http://conchis.org/webact2/doc/html)
 
 
